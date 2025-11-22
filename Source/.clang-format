@@ -1,0 +1,168 @@
+#AStyle clang-format
+Language: Cpp
+DisableFormat: false
+
+###############################################################################
+# Core Formatting
+###############################################################################
+UseTab: ForIndentation
+TabWidth: 4
+IndentWidth: 4
+InsertNewlineAtEOF: true
+ColumnLimit: 220
+SeparateDefinitionBlocks: Leave
+BinPackArguments: false
+BinPackParameters: false
+
+###############################################################################
+# Alignment
+###############################################################################
+AlignAfterOpenBracket: Align
+AlignArrayOfStructures: Right
+AlignEscapedNewlines: LeftWithLastLine
+AlignOperands: Align
+PointerAlignment: Right
+ReferenceAlignment: Right
+
+###############################################################################
+# Line Breaking
+###############################################################################
+AlwaysBreakBeforeMultilineStrings: false
+BreakArrays: false
+BreakFunctionDefinitionParameters: false
+BreakStringLiterals: false
+BreakAfterReturnType: None
+BreakTemplateDeclarations: No
+
+# Brace Wrapping
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterClass: true
+  AfterControlStatement: true
+  AfterEnum: true
+  AfterFunction: true
+  AfterNamespace: true
+  AfterStruct: true
+  AfterUnion: true
+  AfterExternBlock: true
+  BeforeCatch: true
+  BeforeElse: true
+  BeforeWhile: false
+  IndentBraces: false
+  SplitEmptyFunction: true
+  SplitEmptyRecord: true
+  SplitEmptyNamespace: true
+
+###############################################################################
+# Constructor Formatting
+###############################################################################
+BreakConstructorInitializers: BeforeColon
+ConstructorInitializerIndentWidth: 0
+PackConstructorInitializers: BinPack
+
+###############################################################################
+# Spacing
+###############################################################################
+# General Spacing
+SpaceAfterCStyleCast: false
+SpaceAfterLogicalNot: false
+SpaceAfterTemplateKeyword: false
+SpaceAroundPointerQualifiers: Default
+SpaceBeforeAssignmentOperators: true
+SpaceBeforeCpp11BracedList: true
+SpaceBeforeCtorInitializerColon: false
+SpaceBeforeInheritanceColon: false
+SpaceBeforeRangeBasedForLoopColon: true
+SpaceBeforeSquareBrackets: false
+SpaceInEmptyBlock: false
+
+SpaceBeforeParens: Custom
+SpaceBeforeParensOptions:
+  AfterControlStatements: true
+  AfterForeachMacros: true
+  AfterFunctionDefinitionName: false
+  AfterIfMacros: true
+  AfterOverloadedOperator: false
+  AfterPlacementOperator: true
+  AfterRequiresInClause: false
+  AfterRequiresInExpression: false
+  BeforeNonEmptyParentheses: false
+
+# Special Spacing
+SpacesInAngles: Never
+SpacesInContainerLiterals: false
+SpacesInSquareBrackets: false
+
+# Parentheses Spacing
+SpacesInParens: Custom
+SpacesInParensOptions:
+  ExceptDoubleParentheses: true
+  InConditionalStatements: false
+  InCStyleCasts: false
+  InEmptyParentheses: false
+  Other: false
+
+###############################################################################
+# Empty Lines
+###############################################################################
+KeepEmptyLines:
+  AtEndOfFile: true
+  AtStartOfBlock: true
+  AtStartOfFile: false
+
+###############################################################################
+# Switch Case
+###############################################################################
+IndentCaseBlocks: false
+IndentCaseLabels: false
+AllowShortCaseLabelsOnASingleLine: false
+SpaceBeforeCaseColon: false
+
+###############################################################################
+# Access Modifiers
+###############################################################################
+EmptyLineAfterAccessModifier: Never
+EmptyLineBeforeAccessModifier: Always
+IndentAccessModifiers: false
+AccessModifierOffset: -4
+
+###############################################################################
+# Includes
+###############################################################################
+IncludeBlocks: Regroup
+IncludeCategories:
+  - Regex: '^".*\.generated.h"' # UE context only, Always last include
+    SortPriority: 2
+  - Regex: '^<.*\.h>'
+    SortPriority: 1
+  - Regex: '^".*\.h"'
+    SortPriority: 1
+
+SortIncludes: CaseInsensitive
+
+###############################################################################
+# Comments
+###############################################################################
+SpacesBeforeTrailingComments: 2
+SpacesInLineCommentPrefix:
+  Minimum: 1
+  Maximum: -1
+
+###############################################################################
+# Line Wrapping Permissions
+###############################################################################
+AllowAllArgumentsOnNextLine: false
+AllowAllParametersOfDeclarationOnNextLine: false
+AllowShortBlocksOnASingleLine: Never
+AllowShortEnumsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: None
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLambdasOnASingleLine: None
+AllowShortLoopsOnASingleLine: false
+
+###############################################################################
+# Other
+###############################################################################
+IndentGotoLabels: false
+IndentPPDirectives: None
+CompactNamespaces: false
