@@ -1,6 +1,7 @@
 #pragma once
 
 #include "GameFramework/Character.h"
+#include "Interfaces/Saveable_Actor_Interface/Saveable_Actor_Interface.h"
 
 #include "Astronaut.generated.h"
 
@@ -25,12 +26,14 @@ UENUM() enum class EAstronaut_State: uint8
 
 // AAstronaut
 //------------------------------------------------------------------------------------------------------------
-UCLASS() class DECIBEL_API AAstronaut: public ACharacter
+UCLASS() class DECIBEL_API AAstronaut: public ACharacter, public ISaveable_Actor_Interface
 {
 	GENERATED_BODY()
 
 public:
 	AAstronaut();
+	virtual void On_Save_Implementation(FActor_Save_Data &save_data) override;
+    virtual void On_Load_Implementation(const FActor_Save_Data &save_data) override;
 
 protected:
 	virtual void Tick(float delta_time) override;

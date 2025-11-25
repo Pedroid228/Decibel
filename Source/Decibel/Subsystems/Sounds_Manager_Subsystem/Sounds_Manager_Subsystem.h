@@ -15,8 +15,6 @@ UCLASS() class DECIBEL_API USounds_Manager_Subsystem: public UGameInstanceSubsys
 
 public:
 	USounds_Manager_Subsystem();
-	virtual void Initialize(FSubsystemCollectionBase &Collection) override;
-	virtual void Deinitialize() override;
 	UFUNCTION(BlueprintCallable) static void Emit_Sound_At_Pos(const FSound_Stimulus &sound);
 
 	static UPROPERTY() FSound_Stimulus_Delegate On_Sound_Stimulus_Emit;

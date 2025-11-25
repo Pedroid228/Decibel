@@ -40,6 +40,18 @@ AAstronaut::AAstronaut(): Walk_Speed(500.0), Run_Speed(700.0), Astronaut_State(E
 	check(Trace_Interaction_Component != 0);
 }
 //------------------------------------------------------------------------------------------------------------
+void AAstronaut::On_Save_Implementation(FActor_Save_Data &save_data)
+{
+	save_data.Actor_Path_Name = GetPathNameSafe(this);
+	save_data.Transform = GetActorTransform();
+	save_data.Astronaut_Save_Data.Has_Key_Card = true;
+}
+//------------------------------------------------------------------------------------------------------------
+void AAstronaut::On_Load_Implementation(const FActor_Save_Data &save_data)
+{
+	SetActorTransform(save_data.Transform);
+}
+//------------------------------------------------------------------------------------------------------------
 void AAstronaut::Tick(float delta_time)
 {
 	FVector line_trace_start;

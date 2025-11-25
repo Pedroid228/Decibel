@@ -12,6 +12,17 @@ AHush::AHush()
 	check(Hearing_Component != 0);
 }
 //------------------------------------------------------------------------------------------------------------
+void AHush::On_Save_Implementation(FActor_Save_Data &save_data)
+{
+	save_data.Actor_Path_Name = GetPathNameSafe(this);
+	save_data.Transform = GetActorTransform();
+}
+//------------------------------------------------------------------------------------------------------------
+void AHush::On_Load_Implementation(const FActor_Save_Data &save_data)
+{
+	SetActorTransform(save_data.Transform);
+}
+//------------------------------------------------------------------------------------------------------------
 UBehaviorTree *AHush::Get_BT()
 {
 	return BT;

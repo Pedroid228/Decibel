@@ -15,13 +15,3 @@ void USounds_Manager_Subsystem::Emit_Sound_At_Pos(const FSound_Stimulus &sound)
 	On_Sound_Stimulus_Emit.Broadcast(sound);
 }
 //------------------------------------------------------------------------------------------------------------
-void USounds_Manager_Subsystem::Initialize(FSubsystemCollectionBase &collection)
-{
-	Super::Initialize(collection);
-}
-//------------------------------------------------------------------------------------------------------------
-void USounds_Manager_Subsystem::Deinitialize()
-{
-	Super::Deinitialize();
-}
-//------------------------------------------------------------------------------------------------------------

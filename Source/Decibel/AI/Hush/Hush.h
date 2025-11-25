@@ -1,6 +1,7 @@
 #pragma once
 
 #include "GameFramework/Character.h"
+#include "Interfaces/Saveable_Actor_Interface/Saveable_Actor_Interface.h"
 
 #include "Hush.generated.h"
 
@@ -10,13 +11,14 @@ class UAI_Hearing_Component;
 
 // AHush
 //------------------------------------------------------------------------------------------------------------
-UCLASS() class DECIBEL_API AHush: public ACharacter
+UCLASS() class DECIBEL_API AHush: public ACharacter, public ISaveable_Actor_Interface
 {
 	GENERATED_BODY()
 
 public:
 	AHush();
-
+	virtual void On_Save_Implementation(FActor_Save_Data &save_data) override;
+    virtual void On_Load_Implementation(const FActor_Save_Data &save_data) override;
 	UBehaviorTree *Get_BT();
 
 protected:
