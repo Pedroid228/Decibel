@@ -19,7 +19,10 @@ class ITrace_Interaction_Interface
 	GENERATED_BODY()
 
 public:
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable) void On_Trace_Hit(AActor *InteractingActor, UPrimitiveComponent *HitComponent);
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable) void On_Trace_Hit(AActor *interacting_actor, UPrimitiveComponent *hit_component);
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable) void On_Trace_Leave();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable) void On_Interact_Begin(AActor *interacting_actor);
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable) void On_Interact_End();
 };
 //------------------------------------------------------------------------------------------------------------

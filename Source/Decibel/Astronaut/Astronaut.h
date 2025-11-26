@@ -50,6 +50,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input) UInputAction *IA_Look = 0;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input) UInputAction *IA_Crouch = 0;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input) UInputAction *IA_Sprint = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input) UInputAction *IA_Interact = 0;
 
 private:
 	void Set_State(EAstronaut_State new_state);
@@ -59,11 +60,14 @@ private:
 	void On_Action_Crouch_End();
 	void On_Action_Sprint_Begin();
 	void On_Action_Sprint_End();
+	void On_Action_Interact_Begin();
+	void On_Action_Interact_End();
 
 	void Set_Character_Speed(double speed);
 
 	APlayerController *Get_Player_Controller();
 
 	EAstronaut_State Astronaut_State;
+	AActor *Interacting_Actor = 0;
 };
 //------------------------------------------------------------------------------------------------------------

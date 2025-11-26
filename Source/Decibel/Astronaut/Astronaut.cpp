@@ -9,6 +9,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Subsystems/Sounds_Manager_Subsystem/Sounds_Manager_Subsystem.h"
+#include "Interfaces/Trace_Interaction_Interface/Trace_Interaction_Interface.h"
 
 // AAstronaut
 //------------------------------------------------------------------------------------------------------------
@@ -96,6 +97,9 @@ void AAstronaut::SetupPlayerInputComponent(UInputComponent *player_input_compone
 
 	enhanced_input_component->BindAction(IA_Sprint, ETriggerEvent::Triggered, this, &AAstronaut::On_Action_Sprint_Begin);
 	enhanced_input_component->BindAction(IA_Sprint, ETriggerEvent::Completed, this, &AAstronaut::On_Action_Sprint_End);
+
+	enhanced_input_component->BindAction(IA_Interact, ETriggerEvent::Triggered, this, &AAstronaut::On_Action_Interact_Begin);
+	enhanced_input_component->BindAction(IA_Interact, ETriggerEvent::Completed, this, &AAstronaut::On_Action_Interact_End);
 }
 //------------------------------------------------------------------------------------------------------------
 void AAstronaut::Set_State(EAstronaut_State new_state)
@@ -167,6 +171,28 @@ void AAstronaut::On_Action_Sprint_End()
 		Set_Character_Speed(Walk_Speed);
 		Set_State(EAstronaut_State::Base);
 	}
+}
+//------------------------------------------------------------------------------------------------------------
+void AAstronaut::On_Action_Interact_Begin()
+{
+	AActor *interactable_actor = 0;
+
+	check(Trace_Interaction_Component != 0);
+	interactable_actor = Trace_Interaction_Component->Get_Interactable_Actor();
+	if (interactable_actor != 0)
+	{
+		Interacting_Actor = interactable_actor;
+		ITrace_Interaction_Interface::Execute_On_Interact_Begin(interactable_actor, this);
+	}	
+}
+//------------------------------------------------------------------------------------------------------------
+void AAstronaut::On_Action_Interact_End()
+{
+	if (Interacting_Actor != 0)
+	{
+		ITrace_Interaction_Interface::Execute_On_Interact_End(Interacting_Actor);
+		Interacting_Actor = 0;
+	}		
 }
 //------------------------------------------------------------------------------------------------------------
 void AAstronaut::Set_Character_Speed(double speed)

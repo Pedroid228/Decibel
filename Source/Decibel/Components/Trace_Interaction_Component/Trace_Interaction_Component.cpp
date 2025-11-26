@@ -28,7 +28,6 @@ void UTrace_Interaction_Component::Frame_Line_Trace(const FVector &start, const 
 	AActor *owner = 0;
 	AActor *hitted_actor = 0;
 	UPrimitiveComponent *hitted_component = 0;
-	ITrace_Interaction_Interface *actor_interaction_interface = 0;
 
 	owner = GetOwner();
 	check(owner != 0);
@@ -48,15 +47,16 @@ void UTrace_Interaction_Component::Frame_Line_Trace(const FVector &start, const 
 		hitted_component = hit_result.GetComponent();
 		check(hitted_component != 0);
 
-		actor_interaction_interface = Cast<ITrace_Interaction_Interface>(hitted_actor);
-		if (actor_interaction_interface != 0)
-		{  // Actor has interaction interface implementation
-
+		if (hitted_actor->Implements<UTrace_Interaction_Interface>())
+		{
 			if (Curr_Actor != hitted_actor)
 				Curr_Actor = hitted_actor;
 
 			if (Curr_Component != hitted_component)
+			{
 				Curr_Component = hitted_component;
+				ITrace_Interaction_Interface::Execute_On_Trace_Hit(Curr_Actor, owner, Curr_Component);
+			}
 		}
 	}
 	else
