@@ -19,13 +19,18 @@ public:
 
 protected:
 	UPROPERTY(EditAnywhere) float Acceptance_Radius;
+	UPROPERTY(EditAnywhere) float Wait_Time;
 	UPROPERTY(EditAnywhere) FBlackboardKeySelector Curr_Sound_Pos_Key;
 	UPROPERTY(EditAnywhere) FBlackboardKeySelector Curr_Sound_Type_Key;
 	UPROPERTY(EditAnywhere) FBlackboardKeySelector Has_High_Priority_Sound_Key;
 
 private:
 	void Start_Move_To_Target(const FVector &new_target_pos);
+	void Waiting(UBehaviorTreeComponent &owner_comp, float delta_seconds);
+	void Complete_Task(UBehaviorTreeComponent &owner_comp);
 
+	bool Is_Waiting;
+	float Curr_Wait_Time;
 	FVector Curr_Target_Pos;
 	AAIController *AI_Controller = 0;
 	APawn *NPC = 0;

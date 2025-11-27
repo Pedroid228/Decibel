@@ -8,6 +8,7 @@
 class UStaticMeshComponent;
 class UBehaviorTree;
 class UAI_Hearing_Component;
+class UAI_Patrol_Component;
 
 // AHush
 //------------------------------------------------------------------------------------------------------------
@@ -23,7 +24,8 @@ public:
 
 protected:
 	virtual void BeginPlay();
-	UPROPERTY(EditAnywhere, BlueprintReadOnly) UAI_Hearing_Component *Hearing_Component = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Components") UAI_Hearing_Component *Hearing_Component = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Components") UAI_Patrol_Component *Patrol_Component = 0;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) UBehaviorTree *BT = 0;
 };
 //------------------------------------------------------------------------------------------------------------

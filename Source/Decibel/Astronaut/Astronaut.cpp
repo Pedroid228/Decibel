@@ -10,10 +10,11 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Subsystems/Sounds_Manager_Subsystem/Sounds_Manager_Subsystem.h"
 #include "Interfaces/Trace_Interaction_Interface/Trace_Interaction_Interface.h"
+#include "Components/Sound_Emitter_Component/Sound_Emitter_Component.h"
 
 // AAstronaut
 //------------------------------------------------------------------------------------------------------------
-AAstronaut::AAstronaut(): Walk_Speed(500.0), Run_Speed(700.0), Astronaut_State(EAstronaut_State::Base)
+AAstronaut::AAstronaut(): Walk_Speed(500.0), Run_Speed(700.0), Astronaut_State(EAstronaut_State::Idle)
 {
 	USceneComponent *root_comp = 0;
 
@@ -39,6 +40,12 @@ AAstronaut::AAstronaut(): Walk_Speed(500.0), Run_Speed(700.0), Astronaut_State(E
 
 	Trace_Interaction_Component = CreateDefaultSubobject<UTrace_Interaction_Component>(TEXT("Trace_Interaction_Comp"));
 	check(Trace_Interaction_Component != 0);
+
+	Footsteps_Sound_Component = CreateDefaultSubobject<UFootsteps_Sound_Component>(TEXT("Footsteps_Sound_Comp"));
+	check(Footsteps_Sound_Component != 0);
+
+	Sound_Emitter_Component = CreateDefaultSubobject<USound_Emitter_Component>(TEXT("Sound_Emitter_Comp"));
+	check(Sound_Emitter_Component != 0);
 }
 //------------------------------------------------------------------------------------------------------------
 void AAstronaut::On_Save_Implementation(FActor_Save_Data &save_data)
@@ -89,7 +96,9 @@ void AAstronaut::SetupPlayerInputComponent(UInputComponent *player_input_compone
 	enhanced_input_component = Cast<UEnhancedInputComponent>(player_input_component);
 	check(enhanced_input_component != 0);
 
-	enhanced_input_component->BindAction(IA_Move, ETriggerEvent::Triggered, this, &AAstronaut::On_Action_Move);
+	enhanced_input_component->BindAction(IA_Move, ETriggerEvent::Triggered, this, &AAstronaut::On_Action_Move_Begin);
+	enhanced_input_component->BindAction(IA_Move, ETriggerEvent::Completed, this, &AAstronaut::On_Action_Move_End);
+
 	enhanced_input_component->BindAction(IA_Look, ETriggerEvent::Triggered, this, &AAstronaut::On_Action_Look);
 
 	enhanced_input_component->BindAction(IA_Crouch, ETriggerEvent::Triggered, this, &AAstronaut::On_Action_Crouch_Begin);
@@ -107,9 +116,23 @@ void AAstronaut::Set_State(EAstronaut_State new_state)
 	if (new_state == Astronaut_State)
 		return;
 
+	switch (Astronaut_State)
+	{
+	case EAstronaut_State::Crouch:
+		UnCrouch();
+		break;
+
+	case EAstronaut_State::Sprint:
+		Set_Character_Speed(Walk_Speed);
+	}
+
 	switch (new_state)
 	{
-	case EAstronaut_State::Base:
+	case EAstronaut_State::Idle:
+		break;
+
+	case EAstronaut_State::Walk:
+		Set_Character_Speed(Walk_Speed);
 		break;
 
 	case EAstronaut_State::Crouch:
@@ -124,10 +147,13 @@ void AAstronaut::Set_State(EAstronaut_State new_state)
 		checkf(false, TEXT("Invalid astronaut state: %d"), (int32)new_state);
 	}
 
+	check(Footsteps_Sound_Component != 0);
+	Footsteps_Sound_Component->Set_State(new_state);
+
 	Astronaut_State = new_state;
 }
 //------------------------------------------------------------------------------------------------------------
-void AAstronaut::On_Action_Move(const FInputActionValue &value)
+void AAstronaut::On_Action_Move_Begin(const FInputActionValue &value)
 {
 	FVector2D movement_input_vector = value.Get<FVector2D>();
 	FVector forward_vector = GetActorForwardVector();
@@ -135,6 +161,15 @@ void AAstronaut::On_Action_Move(const FInputActionValue &value)
 
 	AddMovementInput(forward_vector, movement_input_vector.Y);
 	AddMovementInput(right_vector, movement_input_vector.X);
+
+	if (Astronaut_State == EAstronaut_State::Idle)
+		Set_State(EAstronaut_State::Walk);
+}
+//------------------------------------------------------------------------------------------------------------
+void AAstronaut::On_Action_Move_End()
+{
+	if (Astronaut_State == EAstronaut_State::Walk || Astronaut_State == EAstronaut_State::Sprint)
+		Set_State(EAstronaut_State::Idle);
 }
 //------------------------------------------------------------------------------------------------------------
 void AAstronaut::On_Action_Look(const FInputActionValue &value)
@@ -152,24 +187,35 @@ void AAstronaut::On_Action_Crouch_Begin()
 //------------------------------------------------------------------------------------------------------------
 void AAstronaut::On_Action_Crouch_End()
 {
+	FVector velocity;
+	velocity = GetVelocity();
+
 	if (Astronaut_State == EAstronaut_State::Crouch)
 	{
-		UnCrouch();
-		Set_State(EAstronaut_State::Base);
+		if (velocity.IsNearlyZero())
+			Set_State(EAstronaut_State::Idle);
+		else
+			Set_State(EAstronaut_State::Walk);
 	}
 }
 //------------------------------------------------------------------------------------------------------------
 void AAstronaut::On_Action_Sprint_Begin()
 {
-	Set_State(EAstronaut_State::Sprint);
+	if (Astronaut_State == EAstronaut_State::Walk || Astronaut_State == EAstronaut_State::Idle)
+		Set_State(EAstronaut_State::Sprint);
 }
 //------------------------------------------------------------------------------------------------------------
 void AAstronaut::On_Action_Sprint_End()
 {
+	FVector velocity;
+	velocity = GetVelocity();
+
 	if (Astronaut_State == EAstronaut_State::Sprint)
 	{
-		Set_Character_Speed(Walk_Speed);
-		Set_State(EAstronaut_State::Base);
+		if (velocity.IsNearlyZero())
+			Set_State(EAstronaut_State::Idle);
+		else
+			Set_State(EAstronaut_State::Walk);
 	}
 }
 //------------------------------------------------------------------------------------------------------------
