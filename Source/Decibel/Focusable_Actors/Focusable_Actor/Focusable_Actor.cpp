@@ -1,10 +1,10 @@
-#include "Handwheel.h"
+#include "Focusable_Actor.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/SceneComponent.h"
 
-// AHandwheel
+// AFocusable_Actor
 //------------------------------------------------------------------------------------------------------------
-AHandwheel::AHandwheel(): Is_Interacting(false), Sensivity(1.0)
+AFocusable_Actor::AFocusable_Actor(): Is_Interacting(false), Sensivity(1.0), Last_Mouse_Position(FVector2D::ZeroVector), Mouse_Move_Vector(FVector2D::ZeroVector)
 {
 	Root_Scene = CreateDefaultSubobject<USceneComponent>(TEXT("Root_Scene_Comp"));
 	check(Root_Scene != 0);
@@ -19,71 +19,33 @@ AHandwheel::AHandwheel(): Is_Interacting(false), Sensivity(1.0)
 	SetActorTickEnabled(false);
 }
 //------------------------------------------------------------------------------------------------------------
-void AHandwheel::Tick(float delta_time)
+void AFocusable_Actor::Tick(float delta_time)
 {
-	Super::Tick(delta_time);
+	UWorld *world = 0;
+	APlayerController *player_controller = 0;
+	FVector2D current_mouse_pos;
 
-    if (Is_Interacting)
-		Update_Rotation();
-}
-//------------------------------------------------------------------------------------------------------------
-void AHandwheel::Update_Rotation()
-{
-	double projected_movement;
-	double rotation_angle;
-    UWorld *world = 0;
-    APlayerController *player_controller = 0;
-    FVector2D current_mouse_pos;
-    FVector2D mouse_move_vector;
-    FVector wheel_center_pos;
-    FVector grip_pos;
-    FVector from_center_to_grip, tangent;
-	FVector world_mouse_move;
-	FVector rotation_axis;
-	FVector camera_forward, camera_right, camera_up;
-	FRotator new_rotation;
-
-    world = GetWorld();
+	world = GetWorld();
 	check(world != 0);
 
 	player_controller = world->GetFirstPlayerController();
 	check(player_controller != 0);
 
     player_controller->GetMousePosition(current_mouse_pos.X, current_mouse_pos.Y);
-    mouse_move_vector = current_mouse_pos - Last_Mouse_Position;
+    Mouse_Move_Vector = current_mouse_pos - Last_Mouse_Position;
 
-    wheel_center_pos = GetActorLocation();
-    grip_pos = Get_Grip_Socket_Pos();
-
-	rotation_axis = GetActorForwardVector();
-    from_center_to_grip = (grip_pos - wheel_center_pos).GetSafeNormal();
-	tangent = FVector::CrossProduct(rotation_axis, from_center_to_grip).GetSafeNormal();
-
-	camera_forward = player_controller->PlayerCameraManager->GetCameraRotation().Vector();
-	camera_right = FVector::CrossProduct(FVector::UpVector, camera_forward).GetSafeNormal();
-	camera_up = FVector::CrossProduct(camera_forward, camera_right).GetSafeNormal();
-
-	world_mouse_move = -mouse_move_vector.X * camera_right + mouse_move_vector.Y * camera_up;
-
-	projected_movement = FVector::DotProduct(world_mouse_move, tangent);
-	rotation_angle = projected_movement * Sensivity;
-
-    new_rotation = GetActorRotation();
-    new_rotation.Roll += rotation_angle;
-    SetActorRotation(new_rotation);
-
-    Last_Mouse_Position = current_mouse_pos;
+	Last_Mouse_Position = current_mouse_pos;
 }
 //------------------------------------------------------------------------------------------------------------
-void AHandwheel::On_Trace_Hit_Implementation(AActor *interacting_actor, UPrimitiveComponent *hit_component)
+void AFocusable_Actor::On_Trace_Hit_Implementation(AActor *interacting_actor, UPrimitiveComponent *hit_component)
 {
 }
 //------------------------------------------------------------------------------------------------------------
-void AHandwheel::On_Trace_Leave_Implementation()
+void AFocusable_Actor::On_Trace_Leave_Implementation()
 {
 }
 //------------------------------------------------------------------------------------------------------------
-void AHandwheel::On_Interact_Begin_Implementation(AActor *interacting_actor)
+void AFocusable_Actor::On_Interact_Begin_Implementation(AActor *interacting_actor)
 {
 	FVector grip_pos;
 	FVector player_view_pos;
@@ -113,13 +75,13 @@ void AHandwheel::On_Interact_Begin_Implementation(AActor *interacting_actor)
     player_controller->SetControlRotation(target_rotation);
 }
 //------------------------------------------------------------------------------------------------------------
-void AHandwheel::On_Interact_End_Implementation()
+void AFocusable_Actor::On_Interact_End_Implementation()
 {
 	Is_Interacting = false;
 	SetActorTickEnabled(false);
 }
 //------------------------------------------------------------------------------------------------------------
-FVector AHandwheel::Get_Grip_Socket_Pos()
+FVector AFocusable_Actor::Get_Grip_Socket_Pos()
 {
     FVector grip_pos;
     check(Mesh != 0);
