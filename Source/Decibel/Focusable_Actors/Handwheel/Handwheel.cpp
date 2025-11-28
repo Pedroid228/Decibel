@@ -1,23 +1,40 @@
 #include "Handwheel.h"
+#include "Controlled_Door/Controlled_Door.h"
 
 // ALever
 //------------------------------------------------------------------------------------------------------------
-AHandwheel::AHandwheel()
+AHandwheel::AHandwheel(): Min_Rotation_Angle(0.0), Max_Rotation_Angle(360.0), Curr_Rotation_Angle(0.0)
 {
+	Curr_Rotation_Angle = Min_Rotation_Angle;
+}
+//------------------------------------------------------------------------------------------------------------
+void AHandwheel::BeginPlay()
+{
+	Super::BeginPlay();
+
+	check(Controlled_Door != 0);
 }
 //------------------------------------------------------------------------------------------------------------
 void AHandwheel::Tick(float delta_time)
 {
+	double complete_percent;
+
 	Super::Tick(delta_time);
 
     if (Is_Interacting)
+	{
 		Update_Rotation();
+
+		check(Controlled_Door != 0);
+		complete_percent = Curr_Rotation_Angle / Max_Rotation_Angle;
+		Controlled_Door->Update_Pos_Offset(complete_percent);
+	}
 }
 //------------------------------------------------------------------------------------------------------------
 void AHandwheel::Update_Rotation()
 {
 	double projected_movement;
-	double rotation_angle;
+	double additive_rotation_angle;
     UWorld *world = 0;
     APlayerController *player_controller = 0;
     FVector wheel_center_pos;
@@ -48,10 +65,12 @@ void AHandwheel::Update_Rotation()
 	world_mouse_move = -Mouse_Move_Vector.X * camera_right + Mouse_Move_Vector.Y * camera_up;
 
 	projected_movement = FVector::DotProduct(world_mouse_move, tangent);
-	rotation_angle = projected_movement * Sensivity;
+	additive_rotation_angle = projected_movement * Sensivity;
+
+	Curr_Rotation_Angle = FMath::Clamp(Curr_Rotation_Angle + additive_rotation_angle, Min_Rotation_Angle, Max_Rotation_Angle);
 
     new_rotation = GetActorRotation();
-    new_rotation.Roll += rotation_angle;
+    new_rotation.Roll = Curr_Rotation_Angle;
     SetActorRotation(new_rotation);
 }
 //------------------------------------------------------------------------------------------------------------

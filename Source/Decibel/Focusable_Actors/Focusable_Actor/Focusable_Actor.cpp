@@ -25,6 +25,8 @@ void AFocusable_Actor::Tick(float delta_time)
 	APlayerController *player_controller = 0;
 	FVector2D current_mouse_pos;
 
+	Super::Tick(delta_time);
+
 	world = GetWorld();
 	check(world != 0);
 
@@ -35,6 +37,8 @@ void AFocusable_Actor::Tick(float delta_time)
     Mouse_Move_Vector = current_mouse_pos - Last_Mouse_Position;
 
 	Last_Mouse_Position = current_mouse_pos;
+
+	Update_Camera_To_Grip();
 }
 //------------------------------------------------------------------------------------------------------------
 void AFocusable_Actor::On_Trace_Hit_Implementation(AActor *interacting_actor, UPrimitiveComponent *hit_component)
@@ -47,13 +51,7 @@ void AFocusable_Actor::On_Trace_Leave_Implementation()
 //------------------------------------------------------------------------------------------------------------
 void AFocusable_Actor::On_Interact_Begin_Implementation(AActor *interacting_actor)
 {
-	FVector grip_pos;
-	FVector player_view_pos;
-	FVector to_target;
-	FRotator player_view_rotation;
-	FRotator target_rotation;
 	UWorld *world = 0;
-	APlayerController *player_controller;
 
 	Is_Interacting = true;
 
@@ -62,23 +60,19 @@ void AFocusable_Actor::On_Interact_Begin_Implementation(AActor *interacting_acto
 	world = GetWorld();
 	check(world != 0);
 
-	player_controller = world->GetFirstPlayerController();
-	check(player_controller != 0);
+	Player_Controller = world->GetFirstPlayerController();
+	check(Player_Controller != 0);
 
-	grip_pos = Get_Grip_Socket_Pos();
-	
-	player_controller->GetPlayerViewPoint(player_view_pos, player_view_rotation);
-
-	to_target = grip_pos - player_view_pos;
-    target_rotation = to_target.Rotation();
-
-    player_controller->SetControlRotation(target_rotation);
+	Update_Camera_To_Grip();
 }
 //------------------------------------------------------------------------------------------------------------
 void AFocusable_Actor::On_Interact_End_Implementation()
 {
 	Is_Interacting = false;
 	SetActorTickEnabled(false);
+	
+	check(Player_Controller != 0);
+	Player_Controller = 0;
 }
 //------------------------------------------------------------------------------------------------------------
 FVector AFocusable_Actor::Get_Grip_Socket_Pos()
@@ -94,3 +88,22 @@ FVector AFocusable_Actor::Get_Grip_Socket_Pos()
 		return FVector::ZeroVector;
 }
 //------------------------------------------------------------------------------------------------------------
+void AFocusable_Actor::Update_Camera_To_Grip()
+{
+	FVector grip_pos;
+	FVector player_view_pos;
+	FVector to_target;
+	FRotator player_view_rotation;
+	FRotator target_rotation;
+
+	grip_pos = Get_Grip_Socket_Pos();
+	
+	Player_Controller->GetPlayerViewPoint(player_view_pos, player_view_rotation);
+
+	to_target = grip_pos - player_view_pos;
+    target_rotation = to_target.Rotation();
+
+    Player_Controller->SetControlRotation(target_rotation);
+}
+//------------------------------------------------------------------------------------------------------------
+

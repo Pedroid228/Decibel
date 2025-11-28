@@ -2,15 +2,9 @@
 
 // AHand_Door
 //------------------------------------------------------------------------------------------------------------
-AHand_Door::AHand_Door(): Min_Offset(0.0), Max_Offset(0.1), Curr_Offset(0.0), Start_Pos(FVector::ZeroVector)
+AHand_Door::AHand_Door(): Min_Offset(0.0), Max_Offset(0.1), Curr_Offset(0.0)
 {
 	Curr_Offset = Min_Offset;
-}
-//------------------------------------------------------------------------------------------------------------
-void AHand_Door::BeginPlay()
-{
-    Super::BeginPlay();
-    Start_Pos = GetActorLocation();
 }
 //------------------------------------------------------------------------------------------------------------
 void AHand_Door::Tick(float delta_time)
@@ -47,15 +41,16 @@ void AHand_Door::Update_Position()
 
     from_door_to_player = (player_pos - door_pos).GetSafeNormal();
 
-    if (FVector::DotProduct(GetActorRightVector(), from_door_to_player) < 0)
-        move_dir = GetActorForwardVector();
-    else
-        move_dir = -GetActorForwardVector();
+    move_dir = FVector(-1.0, 0.0, 0.0);
 
-    horizontal_movement = -Mouse_Move_Vector.X * Sensivity;
+    if (FVector::DotProduct(GetActorRightVector(), from_door_to_player) < 0)
+        horizontal_movement = Mouse_Move_Vector.X * Sensivity;
+    else
+        horizontal_movement = -Mouse_Move_Vector.X * Sensivity;
+
     Curr_Offset = FMath::Clamp(Curr_Offset + horizontal_movement, Min_Offset, Max_Offset);
 
-    new_pos = Start_Pos + (move_dir * Curr_Offset);
-    SetActorLocation(new_pos);
+    new_pos = move_dir * Curr_Offset;
+    Mesh->SetRelativeLocation(new_pos);
 }
 //------------------------------------------------------------------------------------------------------------

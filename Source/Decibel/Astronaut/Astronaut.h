@@ -63,6 +63,7 @@ private:
 
 	APlayerController *Get_Player_Controller();
 
+	bool Is_Input_Disabled;
 	EAstronaut_State Astronaut_State;
 	AActor *Interacting_Actor = 0;
 };

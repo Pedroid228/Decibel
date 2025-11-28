@@ -2,19 +2,19 @@
 
 #include "Camera/CameraComponent.h"
 #include "Components/SkeletalMeshComponent.h"
+#include "Components/Sound_Emitter_Component/Sound_Emitter_Component.h"
 #include "Components/Trace_Interaction_Component/Trace_Interaction_Component.h"
 #include "Data/Sound_Stimulus/Sound_Stimulus.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
-#include "Subsystems/Sounds_Manager_Subsystem/Sounds_Manager_Subsystem.h"
 #include "Interfaces/Trace_Interaction_Interface/Trace_Interaction_Interface.h"
-#include "Components/Sound_Emitter_Component/Sound_Emitter_Component.h"
+#include "Subsystems/Sounds_Manager_Subsystem/Sounds_Manager_Subsystem.h"
 
 // AAstronaut
 //------------------------------------------------------------------------------------------------------------
-AAstronaut::AAstronaut(): Walk_Speed(500.0), Run_Speed(700.0), Astronaut_State(EAstronaut_State::Idle)
+AAstronaut::AAstronaut(): Walk_Speed(500.0), Run_Speed(700.0), Is_Input_Disabled(false), Astronaut_State(EAstronaut_State::Idle)
 {
 	USceneComponent *root_comp = 0;
 
@@ -159,6 +159,9 @@ void AAstronaut::On_Action_Move_Begin(const FInputActionValue &value)
 	FVector forward_vector = GetActorForwardVector();
 	FVector right_vector = GetActorRightVector();
 
+	if (Is_Input_Disabled == true)
+		return;
+
 	AddMovementInput(forward_vector, movement_input_vector.Y);
 	AddMovementInput(right_vector, movement_input_vector.X);
 
@@ -174,7 +177,12 @@ void AAstronaut::On_Action_Move_End()
 //------------------------------------------------------------------------------------------------------------
 void AAstronaut::On_Action_Look(const FInputActionValue &value)
 {
-	FVector2D look_axis_vector = value.Get<FVector2D>();
+	FVector2D look_axis_vector;
+
+	if (Is_Input_Disabled == true)
+		return;
+
+	look_axis_vector = value.Get<FVector2D>();
 
 	AddControllerYawInput(look_axis_vector.X);
 	AddControllerPitchInput(-look_axis_vector.Y);
@@ -229,7 +237,9 @@ void AAstronaut::On_Action_Interact_Begin()
 	{
 		Interacting_Actor = interactable_actor;
 		ITrace_Interaction_Interface::Execute_On_Interact_Begin(interactable_actor, this);
-	}	
+
+		Is_Input_Disabled = true;
+	}
 }
 //------------------------------------------------------------------------------------------------------------
 void AAstronaut::On_Action_Interact_End()
@@ -238,7 +248,9 @@ void AAstronaut::On_Action_Interact_End()
 	{
 		ITrace_Interaction_Interface::Execute_On_Interact_End(Interacting_Actor);
 		Interacting_Actor = 0;
-	}		
+
+		Is_Input_Disabled = false;
+	}
 }
 //------------------------------------------------------------------------------------------------------------
 void AAstronaut::Set_Character_Speed(double speed)

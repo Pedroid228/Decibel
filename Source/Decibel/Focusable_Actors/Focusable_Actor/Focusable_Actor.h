@@ -23,12 +23,15 @@ protected:
 	virtual void On_Interact_Begin_Implementation(AActor *interacting_actor);
 	virtual void On_Interact_End_Implementation();
 	FVector Get_Grip_Socket_Pos();
+	void Update_Camera_To_Grip();
+
 
 	bool Is_Interacting;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) double Sensivity;
 	FVector2D Last_Mouse_Position;
 	FVector2D Mouse_Move_Vector;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly) USceneComponent *Root_Scene = 0;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly) UStaticMeshComponent *Mesh = 0;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly) USceneComponent *Root_Scene = 0;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly) UStaticMeshComponent *Mesh = 0;
+	APlayerController *Player_Controller = 0;
 };
 //------------------------------------------------------------------------------------------------------------

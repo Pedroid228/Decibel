@@ -13,7 +13,6 @@ public:
 	AHand_Door();
 
 protected:
-	virtual void BeginPlay();
 	virtual void Tick(float delta_time);
 	void Update_Position();
 
@@ -22,6 +21,5 @@ protected:
 
 private:
 	double Curr_Offset;
-	FVector Start_Pos;
 };
 //------------------------------------------------------------------------------------------------------------

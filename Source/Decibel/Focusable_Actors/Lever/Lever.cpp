@@ -18,16 +18,13 @@ void ALever::Tick(float delta_time)
 void ALever::Update_Rotation()
 {
 	double vertical_movement;
-	FRotator curr_rotation;
 	FRotator new_rotation;
 
 	vertical_movement = Mouse_Move_Vector.Y * Sensivity;
 
 	Curr_Angle = FMath::Clamp(Curr_Angle + vertical_movement, Min_Angle, Max_Angle);
 
-	curr_rotation = GetActorRotation();
 	new_rotation = FRotator(Curr_Angle, 0.0, 0.0);
-
-	SetActorRelativeRotation(new_rotation);
+	Mesh->SetRelativeRotation(new_rotation);
 }
 //------------------------------------------------------------------------------------------------------------
