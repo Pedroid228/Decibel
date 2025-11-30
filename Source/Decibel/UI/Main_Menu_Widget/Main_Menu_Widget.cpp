@@ -7,6 +7,7 @@
 #include "Subsystems/Game_State_Manager_Subsystem/Game_State_Manager_Subsystem.h"
 #include "Data/Localization_Data/Localization_Data.h"
 #include "Kismet/KismetInternationalizationLibrary.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 // UMain_Menu_Widget
 //------------------------------------------------------------------------------------------------------------
@@ -23,6 +24,9 @@ void UMain_Menu_Widget::NativeConstruct()
 
 	check(Load_Game_Button != 0);
 	Load_Game_Button->OnClicked.AddDynamic(this, &UMain_Menu_Widget::On_Load_Game_Clicked);
+
+	check(Quit_Game_Button != 0);
+	Quit_Game_Button->OnClicked.AddDynamic(this, &UMain_Menu_Widget::On_Quit_Game_Clicked);
 
 	Setup_Combo_Box();
 	Update_Text();

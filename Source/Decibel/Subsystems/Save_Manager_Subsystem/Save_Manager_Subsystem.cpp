@@ -16,6 +16,7 @@ USave_Manager_Subsystem::USave_Manager_Subsystem()
 void USave_Manager_Subsystem::Save_Game()
 {
 	FString save_path;
+	FString map_name;
 	FDecibel_Save_Data decibel_save_data;
 	UStruct *save_data_class = 0;
 	UWorld *world = 0;
@@ -24,7 +25,10 @@ void USave_Manager_Subsystem::Save_Game()
 	world = GetWorld();
 	check(world != 0);
 
-	decibel_save_data.Map_Name = FName(world->GetMapName());
+	map_name = world->GetMapName();
+	map_name.RemoveFromStart(world->StreamingLevelsPrefix);
+	decibel_save_data.Map_Name = FName(map_name);
+
 	UGameplayStatics::GetAllActorsOfClass(world, AActor::StaticClass(), world_actors);
 
 	for (AActor *world_actor : world_actors)
