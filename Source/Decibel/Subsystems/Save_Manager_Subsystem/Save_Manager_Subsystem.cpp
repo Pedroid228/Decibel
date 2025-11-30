@@ -24,6 +24,7 @@ void USave_Manager_Subsystem::Save_Game()
 	world = GetWorld();
 	check(world != 0);
 
+	decibel_save_data.Map_Name = FName(world->GetMapName());
 	UGameplayStatics::GetAllActorsOfClass(world, AActor::StaticClass(), world_actors);
 
 	for (AActor *world_actor : world_actors)
@@ -37,12 +38,21 @@ void USave_Manager_Subsystem::Load_Save()
 {
 	FString save_path;
     FDecibel_Save_Data decibel_save_data;
+	UWorld *world = 0;
 
 	save_path = Get_Last_Save_Path();
     if (!AJson_Utils::Read_Save_Data(save_path, decibel_save_data))
         return;
 
-	Load_Actors_Save(decibel_save_data);
+	world = GetWorld();
+	check(world != 0);
+	UGameplayStatics::OpenLevel(world, decibel_save_data.Map_Name);
+
+	FCoreUObjectDelegates::PostLoadMapWithWorld.AddWeakLambda(this, [this, decibel_save_data](UWorld *world) {
+		check(world != 0);
+		Load_Actors_Save(decibel_save_data);
+		FCoreUObjectDelegates::PostLoadMapWithWorld.RemoveAll(this);
+	});
 }
 //------------------------------------------------------------------------------------------------------------
 bool USave_Manager_Subsystem::Try_Save_Actor(AActor *actor, FDecibel_Save_Data &decibel_save_data)

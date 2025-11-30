@@ -2,7 +2,7 @@
 
 // FActor_Save_Data
 //------------------------------------------------------------------------------------------------------------
-FActor_Save_Data::FActor_Save_Data(): Transform(FTransform::Identity)
+FActor_Save_Data::FActor_Save_Data(): Hand_Door_Offset(0.0), Lever_Angle(0.0), Transform(FTransform::Identity)
 {
 }
 //------------------------------------------------------------------------------------------------------------

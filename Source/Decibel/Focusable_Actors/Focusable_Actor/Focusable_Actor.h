@@ -2,6 +2,7 @@
 
 #include "GameFramework/Actor.h"
 #include "Interfaces/Trace_Interaction_Interface/Trace_Interaction_Interface.h"
+#include "Interfaces/Saveable_Actor_Interface/Saveable_Actor_Interface.h"
 #include "Focusable_Actor.generated.h"
 
 class USceneComponent;
@@ -9,12 +10,13 @@ class UStaticMeshComponent;
 
 // AFocusable_Actor
 //------------------------------------------------------------------------------------------------------------
-UCLASS() class DECIBEL_API AFocusable_Actor: public AActor, public ITrace_Interaction_Interface
+UCLASS() class DECIBEL_API AFocusable_Actor: public AActor, public ITrace_Interaction_Interface, public ISaveable_Actor_Interface
 {
 	GENERATED_BODY()
 
 public:
 	AFocusable_Actor();
+	virtual void On_Save_Implementation(FActor_Save_Data &save_data) override;
 
 protected:
 	virtual void Tick(float delta_time);

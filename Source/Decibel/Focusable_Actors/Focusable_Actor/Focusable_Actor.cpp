@@ -19,6 +19,11 @@ AFocusable_Actor::AFocusable_Actor(): Is_Interacting(false), Sensivity(1.0), Las
 	SetActorTickEnabled(false);
 }
 //------------------------------------------------------------------------------------------------------------
+void AFocusable_Actor::On_Save_Implementation(FActor_Save_Data &save_data)
+{
+	save_data.Actor_Path_Name = GetPathNameSafe(this);
+}
+//------------------------------------------------------------------------------------------------------------
 void AFocusable_Actor::Tick(float delta_time)
 {
 	UWorld *world = 0;

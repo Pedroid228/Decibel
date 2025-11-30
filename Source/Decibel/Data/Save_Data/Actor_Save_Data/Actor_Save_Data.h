@@ -42,6 +42,8 @@ USTRUCT(BlueprintType) struct FActor_Save_Data
 
 	FActor_Save_Data();
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite) double Hand_Door_Offset;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite) double Lever_Angle;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite) FString Actor_Path_Name;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite) FTransform Transform;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite) FAstronaut_Save_Data Astronaut_Save_Data;

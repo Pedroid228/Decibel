@@ -1,0 +1,42 @@
+#pragma once
+
+#include "Blueprint/UserWidget.h"
+
+#include "Main_Menu_Widget.generated.h"
+
+class UButton;
+class UComboBoxString;
+class UTextBlock;
+class UDecibel_Game_Instance;
+
+// UMain_Menu_Widget
+//------------------------------------------------------------------------------------------------------------
+UCLASS() class DECIBEL_API UMain_Menu_Widget : public UUserWidget
+{
+	GENERATED_BODY()
+
+public:
+	UMain_Menu_Widget(const FObjectInitializer &object_initializer);
+
+protected:
+	virtual void NativeConstruct() override;
+
+	UPROPERTY(meta = (BindWidget)) UButton *New_Game_Button = 0;
+	UPROPERTY(meta = (BindWidget)) UButton *Load_Game_Button = 0;
+	UPROPERTY(meta = (BindWidget)) UButton *Quit_Game_Button = 0;
+	UPROPERTY(meta = (BindWidget)) UComboBoxString *Languages_Combo_Box = 0;
+	UPROPERTY(meta = (BindWidget)) UTextBlock *New_Game_Text = 0;
+	UPROPERTY(meta = (BindWidget)) UTextBlock *Load_Game_Text = 0;
+	UPROPERTY(meta = (BindWidget)) UTextBlock *Quit_Game_Text = 0;
+
+private:
+	void Setup_Combo_Box();
+	void Update_Text();
+	UFUNCTION() void On_New_Game_Clicked();
+	UFUNCTION() void On_Load_Game_Clicked();
+	UFUNCTION() void On_Quit_Game_Clicked();
+	UFUNCTION() void On_Language_Changed(FString new_language, ESelectInfo::Type SelectionType);
+
+	UDecibel_Game_Instance *Decibel_Game_Inst = 0;
+};
+//------------------------------------------------------------------------------------------------------------

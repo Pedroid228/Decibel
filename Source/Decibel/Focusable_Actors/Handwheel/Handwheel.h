@@ -17,13 +17,15 @@ public:
 protected:
 	virtual void BeginPlay();
 	virtual void Tick(float delta_time);
-	void Update_Rotation();
+	void Update_Angle();
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly) double Min_Rotation_Angle;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly) double Max_Rotation_Angle;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly) double Min_Angle;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly) double Max_Angle;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) AControlled_Door *Controlled_Door = 0;
 
 private:
-	double Curr_Rotation_Angle;
+	void Update_Rotation();
+
+	double Curr_Angle;
 };
 //------------------------------------------------------------------------------------------------------------

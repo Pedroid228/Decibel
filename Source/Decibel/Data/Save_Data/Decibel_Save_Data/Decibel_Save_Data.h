@@ -11,6 +11,7 @@ USTRUCT(BlueprintType) struct FDecibel_Save_Data
 {
 	GENERATED_BODY()
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite) FName Map_Name;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite) TArray<FActor_Save_Data> Actors_Save_Data;
 };
 //------------------------------------------------------------------------------------------------------------
