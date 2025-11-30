@@ -11,5 +11,6 @@ UCLASS() class DECIBEL_API AMars_Station_Game_Mode: public AGameModeBase
 
 public:
 	AMars_Station_Game_Mode();
+	virtual void BeginPlay();
 };
 //------------------------------------------------------------------------------------------------------------

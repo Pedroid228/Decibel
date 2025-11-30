@@ -15,8 +15,6 @@ void UDecibel_Game_Instance::Init()
 
 	Save_Manager = GetSubsystem<USave_Manager_Subsystem>();
 	check(Save_Manager != 0);
-
-	Main_Menu();
 }
 //------------------------------------------------------------------------------------------------------------
 void UDecibel_Game_Instance::Main_Menu()

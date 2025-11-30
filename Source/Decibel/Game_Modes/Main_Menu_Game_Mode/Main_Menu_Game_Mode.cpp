@@ -10,15 +10,10 @@ AMain_Menu_Game_Mode::AMain_Menu_Game_Mode()
 //------------------------------------------------------------------------------------------------------------
 void AMain_Menu_Game_Mode::BeginPlay()
 {
-	Super::BeginPlay();
-
-	Create_And_Show_Main_Menu_Widget();
-}
-//------------------------------------------------------------------------------------------------------------
-void AMain_Menu_Game_Mode::Create_And_Show_Main_Menu_Widget()
-{
 	UWorld *world = 0;
 	APlayerController *player_controller = 0;
+
+	Super::BeginPlay();
 
 	world = GetWorld();
 	check(world != 0);
@@ -26,6 +21,13 @@ void AMain_Menu_Game_Mode::Create_And_Show_Main_Menu_Widget()
 	player_controller = world->GetFirstPlayerController();
 	check(player_controller != 0);
 
+	player_controller->bShowMouseCursor = true;
+
+	Create_And_Show_Main_Menu_Widget(player_controller);
+}
+//------------------------------------------------------------------------------------------------------------
+void AMain_Menu_Game_Mode::Create_And_Show_Main_Menu_Widget(APlayerController *player_controller)
+{
 	check(Main_Menu_Widget_BP_Class != 0);
 
 	Main_Menu_Widget = CreateWidget<UMain_Menu_Widget>(player_controller, Main_Menu_Widget_BP_Class);
