@@ -62,6 +62,19 @@ void USave_Manager_Subsystem::Load_Save(int32 slot_index)
 	});
 }
 //------------------------------------------------------------------------------------------------------------
+FString USave_Manager_Subsystem::Get_Screenshot_Path(int32 slot_index)
+{
+	FString screen_name;
+	FString screens_dir;
+	FString screen_path;
+
+	screen_name = FString::Printf(TEXT("Screenshot_%d.png"), slot_index);
+	screens_dir = Get_Screenshots_Dir();
+    screen_path = screens_dir / screen_name;
+
+	return screen_path;
+}
+//------------------------------------------------------------------------------------------------------------
 bool USave_Manager_Subsystem::Try_Save_Actor(AActor *actor, FDecibel_Save_Data &decibel_save_data)
 {
 	FActor_Save_Data actor_save_data;
@@ -208,14 +221,7 @@ FString USave_Manager_Subsystem::Get_Save_File_Path(int32 slot_index) const
 //------------------------------------------------------------------------------------------------------------
 void USave_Manager_Subsystem::Create_Screenshot(int32 slot_index)
 {
-	FString file_name;
-	FString screenshots_dir;
-	FString file_path;
-
-	file_name = FString::Printf(TEXT("Screenshot_%d.png"), slot_index);
-	screenshots_dir = Get_Screenshots_Dir();
-    file_path = screenshots_dir / file_name;
-
+	FString file_path = Get_Screenshot_Path(slot_index);
     FScreenshotRequest::RequestScreenshot(file_path, false, false);
 }
 //------------------------------------------------------------------------------------------------------------

@@ -31,6 +31,8 @@ protected:
 	UPROPERTY(meta = (BindWidget)) UTextBlock *Slot_Number_Text = 0;
 
 private:
+	void Setup_Text();
+	void Setup_Image();
 	UFUNCTION() void On_Clicked();
 };
 //------------------------------------------------------------------------------------------------------------

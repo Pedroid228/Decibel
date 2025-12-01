@@ -11,6 +11,7 @@ class UDecibel_Game_Instance;
 class USaves_List_Widget;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOn_Show_Save_Slots, ESlot_Save_State, SaveState);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOn_Language_Changed);
 
 // UMain_Menu_Buttons_Widget
 //------------------------------------------------------------------------------------------------------------
@@ -21,6 +22,7 @@ UCLASS(Abstract) class DECIBEL_API UMain_Menu_Buttons_Widget : public UUserWidge
 public:
 	UMain_Menu_Buttons_Widget(const FObjectInitializer &object_initializer);
 	FOn_Show_Save_Slots On_Show_Save_Slots;
+	FOn_Language_Changed On_Language_Changed;
 
 protected:
 	virtual void NativeConstruct() override;
@@ -39,7 +41,7 @@ private:
 	UFUNCTION() void On_New_Game_Clicked();
 	UFUNCTION() void On_Load_Game_Clicked();
 	UFUNCTION() void On_Quit_Game_Clicked();
-	UFUNCTION() void On_Language_Changed(FString new_language, ESelectInfo::Type SelectionType);
+	UFUNCTION() void Change_Language(FString new_language, ESelectInfo::Type SelectionType);
 
 	UDecibel_Game_Instance *Decibel_Game_Inst = 0;
 };

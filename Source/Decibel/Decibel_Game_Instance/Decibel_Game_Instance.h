@@ -17,10 +17,13 @@ public:
 	void Main_Menu();
 	void New_Game(int32 slot_index);
 	void Load_Game(int32 slot_index);
+	void Save_Curr_Game();
+	void Load_Curr_Game();
 	void Quit_Game();
 	void Open_Level(const FName &map_name);
 
 private:
+	int32 Current_Game_Slot_Index;
 	USave_Manager_Subsystem *Save_Manager = 0;
 };
 //------------------------------------------------------------------------------------------------------------

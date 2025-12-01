@@ -19,7 +19,8 @@ public:
 
 	void Save_Game(int32 slot_index);
 	void Load_Save(int32 slot_index);
-	
+	FString Get_Screenshot_Path(int32 slot_index);
+
 	static const int32 Save_Slots_Count = 4;
 
 private:

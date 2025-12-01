@@ -5,7 +5,7 @@
 
 // UDecibel_Game_Instance
 //------------------------------------------------------------------------------------------------------------
-UDecibel_Game_Instance::UDecibel_Game_Instance()
+UDecibel_Game_Instance::UDecibel_Game_Instance(): Current_Game_Slot_Index(-1)
 {
 }
 //------------------------------------------------------------------------------------------------------------
@@ -29,13 +29,29 @@ void UDecibel_Game_Instance::New_Game(int32 slot_index)
 	FCoreUObjectDelegates::PostLoadMapWithWorld.AddWeakLambda(this, [this, slot_index](UWorld *world) { 
 		check(Save_Manager != 0);
 		Save_Manager->Save_Game(slot_index);
-	});	
+	});
+
+	Current_Game_Slot_Index = slot_index;
 }
 //------------------------------------------------------------------------------------------------------------
 void UDecibel_Game_Instance::Load_Game(int32 slot_index)
 {
 	check(Save_Manager != 0);
 	Save_Manager->Load_Save(slot_index);
+
+	Current_Game_Slot_Index = slot_index;
+}
+//------------------------------------------------------------------------------------------------------------
+void UDecibel_Game_Instance::Save_Curr_Game()
+{
+	check(Save_Manager != 0);
+	Save_Manager->Save_Game(Current_Game_Slot_Index);
+}
+//------------------------------------------------------------------------------------------------------------
+void UDecibel_Game_Instance::Load_Curr_Game()
+{
+	check(Save_Manager != 0);
+	Save_Manager->Load_Save(Current_Game_Slot_Index);
 }
 //------------------------------------------------------------------------------------------------------------
 void UDecibel_Game_Instance::Quit_Game()

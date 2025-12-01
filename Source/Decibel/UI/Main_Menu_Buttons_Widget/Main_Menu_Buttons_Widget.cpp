@@ -38,7 +38,7 @@ void UMain_Menu_Buttons_Widget::NativeConstruct()
 void UMain_Menu_Buttons_Widget::Setup_Combo_Box()
 {
 	check(Languages_Combo_Box != 0);
-	Languages_Combo_Box->OnSelectionChanged.AddDynamic(this, &UMain_Menu_Buttons_Widget::On_Language_Changed);
+	Languages_Combo_Box->OnSelectionChanged.AddDynamic(this, &UMain_Menu_Buttons_Widget::Change_Language);
 
 	for (const auto &language_pair : FLocalization_Data::Languages)
 		Languages_Combo_Box->AddOption(language_pair.Key);
@@ -74,11 +74,13 @@ void UMain_Menu_Buttons_Widget::On_Quit_Game_Clicked()
 	Decibel_Game_Inst->Quit_Game();
 }
 //------------------------------------------------------------------------------------------------------------
-void UMain_Menu_Buttons_Widget::On_Language_Changed(FString new_language, ESelectInfo::Type SelectionType)
+void UMain_Menu_Buttons_Widget::Change_Language(FString new_language, ESelectInfo::Type SelectionType)
 {
 	FString culture_code = FLocalization_Data::Languages[new_language];
 
 	UKismetInternationalizationLibrary::SetCurrentCulture(culture_code, true);
 	Update_Text();
+
+	On_Language_Changed.Broadcast();
 }
 //------------------------------------------------------------------------------------------------------------
