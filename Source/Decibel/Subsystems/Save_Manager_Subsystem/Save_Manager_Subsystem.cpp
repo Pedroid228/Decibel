@@ -111,12 +111,12 @@ void USave_Manager_Subsystem::Save_Actor_Components(AActor *actor, FActor_Save_D
 //------------------------------------------------------------------------------------------------------------
 void USave_Manager_Subsystem::Load_Actors_Save(const FDecibel_Save_Data &decibel_save_data)
 {
-	//FString actor_path_name;
 	FString actor_class_name;
 	UWorld *world = 0;
 	TArray<AActor*> world_actors;
-	//TMap<FString, AActor*> actors_names_map;
 	TMap<FString, TArray<AActor*>> actors_by_class;
+	TArray<AActor*>* actors_array = 0;
+	AActor *actor_to_load = 0;
 
 	world = GetWorld();
 	check(world != 0);
@@ -129,7 +129,6 @@ void USave_Manager_Subsystem::Load_Actors_Save(const FDecibel_Save_Data &decibel
 
         if (world_actor->Implements<USaveable_Actor_Interface>())
 		{
-			//actor_path_name = GetPathNameSafe(world_actor);
 			actor_class_name = world_actor->GetClass()->GetName();
             actors_by_class.FindOrAdd(actor_class_name).Add(world_actor);
         }
@@ -137,13 +136,13 @@ void USave_Manager_Subsystem::Load_Actors_Save(const FDecibel_Save_Data &decibel
 
 	for (const FActor_Save_Data &actor_save_data : decibel_save_data.Actors_Save_Data)
 	{
-		TArray<AActor*>* actors_array = actors_by_class.Find(actor_save_data.Actor_Class_Name);
+		actors_array = actors_by_class.Find(actor_save_data.Actor_Class_Name);
 		if (actors_array == 0)
 			continue;
 
 		check(actors_array != 0 && !actors_array->IsEmpty());
 
-		AActor *actor_to_load = (*actors_array)[0];
+		actor_to_load = (*actors_array)[0];
 		check(actor_to_load != 0);
 
 		actors_array->RemoveAt(0);

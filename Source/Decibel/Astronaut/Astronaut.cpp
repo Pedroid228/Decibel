@@ -51,7 +51,6 @@ AAstronaut::AAstronaut(): Walk_Speed(500.0), Run_Speed(700.0), Is_Input_Disabled
 void AAstronaut::On_Save_Implementation(FActor_Save_Data &save_data)
 {
 	save_data.Actor_Class_Name = GetClass()->GetName();
-	GetActorGuid();
 	save_data.Transform = GetActorTransform();
 	save_data.Astronaut_Save_Data.Has_Key_Card = true;
 }
