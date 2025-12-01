@@ -136,7 +136,7 @@ void USave_Manager_Subsystem::Load_Actors_Save(const FDecibel_Save_Data &decibel
 	{
 		AActor** actor = actors_names_map.Find(actor_save_data.Actor_Path_Name);
 		if (actor == 0 || *actor == 0)
-			return;
+			continue;
 		ISaveable_Actor_Interface::Execute_On_Load(*actor, actor_save_data);
 		Load_Actor_Components_Save(*actor, actor_save_data);
 	}
