@@ -8,12 +8,13 @@
 // USave_Manager_Subsystem
 //------------------------------------------------------------------------------------------------------------
 FString USave_Manager_Subsystem::Save_Dir = "Game_Saves";
+FString USave_Manager_Subsystem::Screenshots_Dir = "Game_Screenshots";
 //------------------------------------------------------------------------------------------------------------
 USave_Manager_Subsystem::USave_Manager_Subsystem()
 {
 }
 //------------------------------------------------------------------------------------------------------------
-void USave_Manager_Subsystem::Save_Game()
+void USave_Manager_Subsystem::Save_Game(int32 slot_index)
 {
 	FString save_path;
 	FString map_name;
@@ -29,22 +30,24 @@ void USave_Manager_Subsystem::Save_Game()
 	map_name.RemoveFromStart(world->StreamingLevelsPrefix);
 	decibel_save_data.Map_Name = FName(map_name);
 
+	Create_Screenshot(slot_index);
+
 	UGameplayStatics::GetAllActorsOfClass(world, AActor::StaticClass(), world_actors);
 
 	for (AActor *world_actor : world_actors)
 		Try_Save_Actor(world_actor, decibel_save_data);
 
-	save_path = Get_Save_File_Path();
+	save_path = Get_Save_File_Path(slot_index);
 	AJson_Utils::Write_Save_Data(save_path, decibel_save_data);
 }
 //------------------------------------------------------------------------------------------------------------
-void USave_Manager_Subsystem::Load_Save()
+void USave_Manager_Subsystem::Load_Save(int32 slot_index)
 {
 	FString save_path;
     FDecibel_Save_Data decibel_save_data;
 	UWorld *world = 0;
 
-	save_path = Get_Last_Save_Path();
+	save_path = Get_Save_File_Path(slot_index);
     if (!AJson_Utils::Read_Save_Data(save_path, decibel_save_data))
         return;
 
@@ -157,54 +160,62 @@ FString USave_Manager_Subsystem::Get_Save_Dir() const
 	return FPaths::ProjectSavedDir() / Save_Dir;
 }
 //------------------------------------------------------------------------------------------------------------
-FString USave_Manager_Subsystem::Get_Save_File_Name() const
+FString USave_Manager_Subsystem::Get_Screenshots_Dir() const
 {
-	FString file_name;
-	FDateTime now;
-
-	now = FDateTime::Now();
-	file_name = FString::Printf(TEXT("Save_%s.json"), *now.ToString(TEXT("%Y-%m-%d_%H-%M-%S")));
-
-	return file_name;
+	return FPaths::ProjectSavedDir() / Screenshots_Dir;
 }
 //------------------------------------------------------------------------------------------------------------
-FString USave_Manager_Subsystem::Get_Save_File_Path() const
+//FString USave_Manager_Subsystem::Get_Save_File_Time() const
+//{
+//	FString file_time;
+//	FDateTime now;
+//
+//	now = FDateTime::Now();
+//	file_time = now.ToString(TEXT("%Y-%m-%d_%H-%M-%S"));
+//
+//	return file_time;
+//}
+//------------------------------------------------------------------------------------------------------------
+FString USave_Manager_Subsystem::Get_Save_File_Path(int32 slot_index) const
 {
 	FString save_dir;
 	FString file_path;
 	FString file_name;
 
 	save_dir = Get_Save_Dir();
-	file_name = Get_Save_File_Name();
+	file_name = FString::Printf(TEXT("Save_%d.json"), slot_index);
 	file_path = save_dir / file_name;
 
 	return file_path;
 }
 //------------------------------------------------------------------------------------------------------------
-FString USave_Manager_Subsystem::Get_Last_Save_Path() const
-{
-    TArray<FString> save_files = Get_All_Save_Files();
-    
-    if (save_files.Num() > 0)
-        return save_files[0];
-    
-    return FString();
-}
+//TArray<FString> USave_Manager_Subsystem::Get_All_Save_Files() const
+//{
+//	FString save_dir;
+//    TArray<FString> save_files;
+//
+//	save_dir = Get_Save_Dir();
+//    
+//    IFileManager::Get().FindFiles(save_files, *(save_dir / TEXT("*.json")), true, false);
+//    
+//    for (FString &save_file : save_files)
+//        save_file = save_dir / save_file;
+//
+//    save_files.Sort([](const FString &a, const FString &b) {return a > b; });
+//    
+//    return save_files;
+//}
 //------------------------------------------------------------------------------------------------------------
-TArray<FString> USave_Manager_Subsystem::Get_All_Save_Files() const
+void USave_Manager_Subsystem::Create_Screenshot(int32 slot_index)
 {
-	FString save_dir;
-    TArray<FString> save_files;
+	FString file_name;
+	FString screenshots_dir;
+	FString file_path;
 
-	save_dir = Get_Save_Dir();
-    
-    IFileManager::Get().FindFiles(save_files, *(save_dir / TEXT("*.json")), true, false);
-    
-    for (FString &save_file : save_files)
-        save_file = save_dir / save_file;
+	file_name = FString::Printf(TEXT("Screenshot_%d.png"), slot_index);
+	screenshots_dir = Get_Screenshots_Dir();
+    file_path = screenshots_dir / file_name;
 
-    save_files.Sort([](const FString &a, const FString &b) {return a > b; });
-    
-    return save_files;
+    FScreenshotRequest::RequestScreenshot(file_path, false, false);
 }
 //------------------------------------------------------------------------------------------------------------

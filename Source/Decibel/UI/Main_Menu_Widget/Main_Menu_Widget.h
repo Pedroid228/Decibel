@@ -1,17 +1,19 @@
 #pragma once
 
 #include "Blueprint/UserWidget.h"
-
+#include "Data/Slot_Save_State/Slot_Save_State.h"
 #include "Main_Menu_Widget.generated.h"
 
 class UButton;
 class UComboBoxString;
 class UTextBlock;
 class UDecibel_Game_Instance;
+class USaves_List_Widget;
+class UMain_Menu_Buttons_Widget;
 
 // UMain_Menu_Widget
 //------------------------------------------------------------------------------------------------------------
-UCLASS() class DECIBEL_API UMain_Menu_Widget : public UUserWidget
+UCLASS(Abstract) class DECIBEL_API UMain_Menu_Widget: public UUserWidget
 {
 	GENERATED_BODY()
 
@@ -21,22 +23,10 @@ public:
 protected:
 	virtual void NativeConstruct() override;
 
-	UPROPERTY(meta = (BindWidget)) UButton *New_Game_Button = 0;
-	UPROPERTY(meta = (BindWidget)) UButton *Load_Game_Button = 0;
-	UPROPERTY(meta = (BindWidget)) UButton *Quit_Game_Button = 0;
-	UPROPERTY(meta = (BindWidget)) UComboBoxString *Languages_Combo_Box = 0;
-	UPROPERTY(meta = (BindWidget)) UTextBlock *New_Game_Text = 0;
-	UPROPERTY(meta = (BindWidget)) UTextBlock *Load_Game_Text = 0;
-	UPROPERTY(meta = (BindWidget)) UTextBlock *Quit_Game_Text = 0;
+	UPROPERTY(meta = (BindWidget)) UMain_Menu_Buttons_Widget *Main_Menu_Buttons = 0;
+	UPROPERTY(meta = (BindWidget)) USaves_List_Widget *Saves_List = 0;
 
 private:
-	void Setup_Combo_Box();
-	void Update_Text();
-	UFUNCTION() void On_New_Game_Clicked();
-	UFUNCTION() void On_Load_Game_Clicked();
-	UFUNCTION() void On_Quit_Game_Clicked();
-	UFUNCTION() void On_Language_Changed(FString new_language, ESelectInfo::Type SelectionType);
-
-	UDecibel_Game_Instance *Decibel_Game_Inst = 0;
+	UFUNCTION() void Show_Save_Slots(ESlot_Save_State state);
 };
 //------------------------------------------------------------------------------------------------------------

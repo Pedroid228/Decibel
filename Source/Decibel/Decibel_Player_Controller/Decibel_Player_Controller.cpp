@@ -25,7 +25,7 @@ void ADecibel_Player_Controller::Load_Save()
     save_manager_subsys = game_inst->GetSubsystem<USave_Manager_Subsystem>();
     check(save_manager_subsys != 0);
 
-    save_manager_subsys->Load_Save();
+    save_manager_subsys->Load_Save(0);
 }
 //------------------------------------------------------------------------------------------------------------
 void ADecibel_Player_Controller::Save_Game()
@@ -39,6 +39,6 @@ void ADecibel_Player_Controller::Save_Game()
     save_manager_subsys = game_inst->GetSubsystem<USave_Manager_Subsystem>();
     check(save_manager_subsys != 0);
 
-    save_manager_subsys->Save_Game();
+    save_manager_subsys->Save_Game(0);
 }
 //------------------------------------------------------------------------------------------------------------

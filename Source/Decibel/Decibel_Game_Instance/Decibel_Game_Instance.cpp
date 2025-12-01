@@ -22,20 +22,20 @@ void UDecibel_Game_Instance::Main_Menu()
 	Open_Level(TEXT("Menu_Map"));
 }
 //------------------------------------------------------------------------------------------------------------
-void UDecibel_Game_Instance::New_Game()
+void UDecibel_Game_Instance::New_Game(int32 slot_index)
 {
 	Open_Level(TEXT("Test_Map"));
 
-	FCoreUObjectDelegates::PostLoadMapWithWorld.AddWeakLambda(this, [this](UWorld *world) { 
+	FCoreUObjectDelegates::PostLoadMapWithWorld.AddWeakLambda(this, [this, slot_index](UWorld *world) { 
 		check(Save_Manager != 0);
-		Save_Manager->Save_Game();
+		Save_Manager->Save_Game(slot_index);
 	});	
 }
 //------------------------------------------------------------------------------------------------------------
-void UDecibel_Game_Instance::Load_Game()
+void UDecibel_Game_Instance::Load_Game(int32 slot_index)
 {
 	check(Save_Manager != 0);
-	Save_Manager->Load_Save();
+	Save_Manager->Load_Save(slot_index);
 }
 //------------------------------------------------------------------------------------------------------------
 void UDecibel_Game_Instance::Quit_Game()

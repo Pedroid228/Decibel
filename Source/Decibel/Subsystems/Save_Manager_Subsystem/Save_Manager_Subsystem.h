@@ -17,8 +17,10 @@ UCLASS() class DECIBEL_API USave_Manager_Subsystem: public UGameInstanceSubsyste
 public:
 	USave_Manager_Subsystem();
 
-	void Save_Game();
-	void Load_Save();
+	void Save_Game(int32 slot_index);
+	void Load_Save(int32 slot_index);
+	
+	static const int32 Save_Slots_Count = 4;
 
 private:
 	bool Try_Save_Actor(AActor *actor, FDecibel_Save_Data &decibel_save_data);
@@ -26,11 +28,12 @@ private:
 	void Load_Actors_Save(const FDecibel_Save_Data &decibel_save_data);
 	void Load_Actor_Components_Save(AActor *actor, const FActor_Save_Data &actor_save_data);
 	FString Get_Save_Dir() const;
-	FString Get_Save_File_Name() const;
-	FString Get_Save_File_Path() const;
-	TArray<FString> Get_All_Save_Files() const;
-	FString Get_Last_Save_Path() const;
+	FString Get_Screenshots_Dir() const;
+	FString Get_Save_File_Path(int32 slot_index) const;
+	//TArray<FString> Get_All_Save_Files() const
+	void Create_Screenshot(int32 slot_index);
 
 	static FString Save_Dir;
+	static FString Screenshots_Dir;
 };
 //------------------------------------------------------------------------------------------------------------

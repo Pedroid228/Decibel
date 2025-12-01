@@ -15,8 +15,8 @@ public:
 	UDecibel_Game_Instance();
 	virtual void Init() override;
 	void Main_Menu();
-	void New_Game();
-	void Load_Game();
+	void New_Game(int32 slot_index);
+	void Load_Game(int32 slot_index);
 	void Quit_Game();
 	void Open_Level(const FName &map_name);
 
