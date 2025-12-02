@@ -3,6 +3,7 @@
 #include "Components/ActorComponent.h"
 #include "Data/Sound_Stimulus/Sound_Stimulus.h"
 #include "Interfaces/Saveable_Actor_Interface/Saveable_Actor_Interface.h"
+
 #include "AI_Hearing_Component.generated.h"
 
 class AAIController;

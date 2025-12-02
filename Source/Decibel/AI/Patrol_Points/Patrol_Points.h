@@ -1,6 +1,7 @@
 #pragma once
 
 #include "GameFramework/Actor.h"
+
 #include "Patrol_Points.generated.h"
 
 // APatrol_Points
@@ -15,6 +16,6 @@ public:
 	FVector Get_Point_By_Index(int32 index);
 
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (MakeEditWidget ="true") ) TArray<FVector> Points;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (MakeEditWidget = "true")) TArray<FVector> Points;
 };
 //------------------------------------------------------------------------------------------------------------

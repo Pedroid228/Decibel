@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Focusable_Actors/Focusable_Actor/Focusable_Actor.h"
+
 #include "Handwheel.generated.h"
 
 class AControlled_Door;
@@ -13,6 +14,8 @@ UCLASS() class DECIBEL_API AHandwheel: public AFocusable_Actor
 
 public:
 	AHandwheel();
+	virtual void On_Save_Implementation(FActor_Save_Data &save_data) override;
+	virtual void On_Load_Implementation(const FActor_Save_Data &save_data) override;
 
 protected:
 	virtual void BeginPlay();
@@ -25,6 +28,7 @@ protected:
 
 private:
 	void Update_Rotation();
+	void Update_Controlling_Door();
 
 	double Curr_Angle;
 };

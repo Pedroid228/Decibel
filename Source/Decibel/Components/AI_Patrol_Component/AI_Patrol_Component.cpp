@@ -1,4 +1,5 @@
 #include "AI_Patrol_Component.h"
+
 #include "AI/Patrol_Points/Patrol_Points.h"
 #include "Engine/TargetPoint.h"
 

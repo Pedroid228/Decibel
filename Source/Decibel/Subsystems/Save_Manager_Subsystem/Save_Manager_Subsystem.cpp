@@ -1,9 +1,10 @@
 #include "Save_Manager_Subsystem.h"
-#include "Json_Utils/Json_Utils.h"
-#include "Interfaces/Saveable_Actor_Interface/Saveable_Actor_Interface.h"
-#include "Interfaces/Saveable_Actor_Component_Interface/Saveable_Actor_Component_Interface.h"
-#include "Kismet/GameplayStatics.h"
+
 #include "Data/Save_Data/Decibel_Save_Data/Decibel_Save_Data.h"
+#include "Interfaces/Saveable_Actor_Component_Interface/Saveable_Actor_Component_Interface.h"
+#include "Interfaces/Saveable_Actor_Interface/Saveable_Actor_Interface.h"
+#include "Json_Utils/Json_Utils.h"
+#include "Kismet/GameplayStatics.h"
 
 // USave_Manager_Subsystem
 //------------------------------------------------------------------------------------------------------------
@@ -21,7 +22,7 @@ void USave_Manager_Subsystem::Save_Game(int32 slot_index)
 	FDecibel_Save_Data decibel_save_data;
 	UStruct *save_data_class = 0;
 	UWorld *world = 0;
-	TArray<AActor*> world_actors;
+	TArray<AActor *> world_actors;
 
 	world = GetWorld();
 	check(world != 0);
@@ -44,12 +45,12 @@ void USave_Manager_Subsystem::Save_Game(int32 slot_index)
 void USave_Manager_Subsystem::Load_Save(int32 slot_index)
 {
 	FString save_path;
-    FDecibel_Save_Data decibel_save_data;
+	FDecibel_Save_Data decibel_save_data;
 	UWorld *world = 0;
 
 	save_path = Get_Save_File_Path(slot_index);
-    if (!AJson_Utils::Read_Save_Data(save_path, decibel_save_data))
-        return;
+	if (!AJson_Utils::Read_Save_Data(save_path, decibel_save_data))
+		return;
 
 	world = GetWorld();
 	check(world != 0);
@@ -70,7 +71,7 @@ FString USave_Manager_Subsystem::Get_Screenshot_Path(int32 slot_index)
 
 	screen_name = FString::Printf(TEXT("Screenshot_%d.png"), slot_index);
 	screens_dir = Get_Screenshots_Dir();
-    screen_path = screens_dir / screen_name;
+	screen_path = screens_dir / screen_name;
 
 	return screen_path;
 }
@@ -95,7 +96,7 @@ bool USave_Manager_Subsystem::Try_Save_Actor(AActor *actor, FDecibel_Save_Data &
 void USave_Manager_Subsystem::Save_Actor_Components(AActor *actor, FActor_Save_Data &actor_save_data)
 {
 	FActor_Component_Save_Data actor_component_save_data;
-	TSet<UActorComponent*> actor_components;
+	TSet<UActorComponent *> actor_components;
 
 	actor_components = actor->GetComponents();
 
@@ -113,33 +114,30 @@ void USave_Manager_Subsystem::Load_Actors_Save(const FDecibel_Save_Data &decibel
 {
 	FString actor_class_name;
 	UWorld *world = 0;
-	TArray<AActor*> world_actors;
-	TMap<FString, TArray<AActor*>> actors_by_class;
-	TArray<AActor*>* actors_array = 0;
+	TArray<AActor *> world_actors;
+	TMap<FString, TArray<AActor *>> actors_by_class;
+	TArray<AActor *> *actors_array = 0;
 	AActor *actor_to_load = 0;
 
 	world = GetWorld();
 	check(world != 0);
 
-    UGameplayStatics::GetAllActorsOfClass(world, AActor::StaticClass(), world_actors);
+	UGameplayStatics::GetAllActorsOfClass(world, AActor::StaticClass(), world_actors);
 
-    for (AActor* world_actor : world_actors)
-    {
+	for (AActor *world_actor : world_actors)
+	{
 		check(world_actor != 0);
 
-        if (world_actor->Implements<USaveable_Actor_Interface>())
+		if (world_actor->Implements<USaveable_Actor_Interface>())
 		{
 			actor_class_name = world_actor->GetClass()->GetName();
-            actors_by_class.FindOrAdd(actor_class_name).Add(world_actor);
-        }
-    }
+			actors_by_class.FindOrAdd(actor_class_name).Add(world_actor);
+		}
+	}
 
 	for (const FActor_Save_Data &actor_save_data : decibel_save_data.Actors_Save_Data)
 	{
 		actors_array = actors_by_class.Find(actor_save_data.Actor_Class_Name);
-		if (actors_array == 0)
-			continue;
-
 		check(actors_array != 0 && !actors_array->IsEmpty());
 
 		actor_to_load = (*actors_array)[0];
@@ -155,25 +153,25 @@ void USave_Manager_Subsystem::Load_Actors_Save(const FDecibel_Save_Data &decibel
 void USave_Manager_Subsystem::Load_Actor_Components_Save(AActor *actor, const FActor_Save_Data &actor_save_data)
 {
 	FString component_path_name;
-	TSet<UActorComponent*> actor_components;
-	TMap<FString, UActorComponent*> components_names_map;
+	TSet<UActorComponent *> actor_components;
+	TMap<FString, UActorComponent *> components_names_map;
 
 	check(actor != 0);
 
-	for (UActorComponent* actor_component : actor_components)
-    {
+	for (UActorComponent *actor_component : actor_components)
+	{
 		check(actor_component != 0);
 
-        if (actor_component->Implements<USaveable_Actor_Component_Interface>())
+		if (actor_component->Implements<USaveable_Actor_Component_Interface>())
 		{
 			component_path_name = GetPathNameSafe(actor_component);
-            components_names_map.Add(component_path_name, actor_component);
-        }
-    }
+			components_names_map.Add(component_path_name, actor_component);
+		}
+	}
 
 	for (const FActor_Component_Save_Data &component_save_data : actor_save_data.Components_Save_Data)
 	{
-		UActorComponent** actor_component = components_names_map.Find(component_save_data.Component_Path_Name);
+		UActorComponent **actor_component = components_names_map.Find(component_save_data.Component_Path_Name);
 		check(actor_component != 0 && *actor_component != 0);
 		ISaveable_Actor_Component_Interface::Execute_On_Load(*actor_component, component_save_data);
 	}
@@ -189,17 +187,6 @@ FString USave_Manager_Subsystem::Get_Screenshots_Dir() const
 	return FPaths::ProjectSavedDir() / Screenshots_Dir;
 }
 //------------------------------------------------------------------------------------------------------------
-//FString USave_Manager_Subsystem::Get_Save_File_Time() const
-//{
-//	FString file_time;
-//	FDateTime now;
-//
-//	now = FDateTime::Now();
-//	file_time = now.ToString(TEXT("%Y-%m-%d_%H-%M-%S"));
-//
-//	return file_time;
-//}
-//------------------------------------------------------------------------------------------------------------
 FString USave_Manager_Subsystem::Get_Save_File_Path(int32 slot_index) const
 {
 	FString save_dir;
@@ -213,26 +200,9 @@ FString USave_Manager_Subsystem::Get_Save_File_Path(int32 slot_index) const
 	return file_path;
 }
 //------------------------------------------------------------------------------------------------------------
-//TArray<FString> USave_Manager_Subsystem::Get_All_Save_Files() const
-//{
-//	FString save_dir;
-//    TArray<FString> save_files;
-//
-//	save_dir = Get_Save_Dir();
-//    
-//    IFileManager::Get().FindFiles(save_files, *(save_dir / TEXT("*.json")), true, false);
-//    
-//    for (FString &save_file : save_files)
-//        save_file = save_dir / save_file;
-//
-//    save_files.Sort([](const FString &a, const FString &b) {return a > b; });
-//    
-//    return save_files;
-//}
-//------------------------------------------------------------------------------------------------------------
 void USave_Manager_Subsystem::Create_Screenshot(int32 slot_index)
 {
 	FString file_path = Get_Screenshot_Path(slot_index);
-    FScreenshotRequest::RequestScreenshot(file_path, false, false);
+	FScreenshotRequest::RequestScreenshot(file_path, false, false);
 }
 //------------------------------------------------------------------------------------------------------------

@@ -1,6 +1,5 @@
 #include "Main_Menu_Game_Mode.h"
-#include "UI/Main_Menu_Widget/Main_Menu_Widget.h"
-#include "Subsystems/Game_State_Manager_Subsystem/Game_State_Manager_Subsystem.h"
+#include "UI/Main_Menu/Main_Menu_Widget/Main_Menu_Widget.h"
 
 // AMain_Menu_Game_Mode
 //------------------------------------------------------------------------------------------------------------

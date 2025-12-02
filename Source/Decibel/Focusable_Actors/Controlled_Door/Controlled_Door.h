@@ -1,6 +1,7 @@
 #pragma once
 
 #include "GameFramework/Actor.h"
+
 #include "Controlled_Door.generated.h"
 
 // AControlled_Door

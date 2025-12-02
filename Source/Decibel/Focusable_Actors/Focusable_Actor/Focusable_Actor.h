@@ -1,8 +1,9 @@
 #pragma once
 
 #include "GameFramework/Actor.h"
-#include "Interfaces/Trace_Interaction_Interface/Trace_Interaction_Interface.h"
 #include "Interfaces/Saveable_Actor_Interface/Saveable_Actor_Interface.h"
+#include "Interfaces/Trace_Interaction_Interface/Trace_Interaction_Interface.h"
+
 #include "Focusable_Actor.generated.h"
 
 class USceneComponent;
@@ -26,7 +27,6 @@ protected:
 	virtual void On_Interact_End_Implementation();
 	FVector Get_Grip_Socket_Pos();
 	void Update_Camera_To_Grip();
-
 
 	bool Is_Interacting;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) double Sensivity;

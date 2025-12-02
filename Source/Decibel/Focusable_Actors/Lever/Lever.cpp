@@ -11,7 +11,7 @@ void ALever::On_Save_Implementation(FActor_Save_Data &save_data)
 {
 	Super::On_Save_Implementation(save_data);
 
-    save_data.Lever_Angle = Curr_Angle;
+	save_data.Lever_Angle = Curr_Angle;
 }
 //------------------------------------------------------------------------------------------------------------
 void ALever::On_Load_Implementation(const FActor_Save_Data &save_data)
@@ -26,7 +26,7 @@ void ALever::Tick(float delta_time)
 {
 	Super::Tick(delta_time);
 
-    if (Is_Interacting)
+	if (Is_Interacting)
 		Update_Angle();
 }
 //------------------------------------------------------------------------------------------------------------

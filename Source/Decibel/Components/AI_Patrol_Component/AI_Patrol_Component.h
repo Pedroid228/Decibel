@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Components/ActorComponent.h"
+
 #include "AI_Patrol_Component.generated.h"
 
 class APatrol_Points;

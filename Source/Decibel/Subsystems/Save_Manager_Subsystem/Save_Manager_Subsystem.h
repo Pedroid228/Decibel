@@ -31,7 +31,7 @@ private:
 	FString Get_Save_Dir() const;
 	FString Get_Screenshots_Dir() const;
 	FString Get_Save_File_Path(int32 slot_index) const;
-	//TArray<FString> Get_All_Save_Files() const
+	// TArray<FString> Get_All_Save_Files() const
 	void Create_Screenshot(int32 slot_index);
 
 	static FString Save_Dir;

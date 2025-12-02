@@ -4,7 +4,6 @@
 
 #include "Decibel_Save_Data.generated.h"
 
-
 // FDecibel_Save_Data
 //------------------------------------------------------------------------------------------------------------
 USTRUCT(BlueprintType) struct FDecibel_Save_Data

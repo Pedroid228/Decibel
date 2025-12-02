@@ -28,18 +28,18 @@ public:
 
 protected:
 	virtual void BeginPlay();
-    UPROPERTY(EditAnywhere) double Footstep_Interval_Walk;
-    UPROPERTY(EditAnywhere) double Footstep_Interval_Sprint;
-    UPROPERTY(EditAnywhere) USoundBase *Footstep_Sound = 0;
+	UPROPERTY(EditAnywhere) double Footstep_Interval_Walk;
+	UPROPERTY(EditAnywhere) double Footstep_Interval_Sprint;
+	UPROPERTY(EditAnywhere) USoundBase *Footstep_Sound = 0;
 
 private:
 	void Start_Footsteps();
 	void Stop_Footsteps();
-    void Play_Footstep_Sound();
+	void Play_Footstep_Sound();
 	void Emit_Sound(AActor *owner, const FVector &owner_pos);
 
 	ESound_Type Sound_Type;
 	double Curr_Footstep_Interval;
-    FTimerHandle Footsteps_Timer_Handle;
+	FTimerHandle Footsteps_Timer_Handle;
 };
 //------------------------------------------------------------------------------------------------------------

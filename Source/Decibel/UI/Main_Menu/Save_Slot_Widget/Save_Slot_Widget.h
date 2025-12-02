@@ -1,8 +1,9 @@
 #pragma once
 
-#include "Blueprint/UserWidget.h"
 #include "Blueprint/IUserObjectListEntry.h"
+#include "Blueprint/UserWidget.h"
 #include "Data/Slot_Save_State/Slot_Save_State.h"
+
 #include "Save_Slot_Widget.generated.h"
 
 class UButton;

@@ -1,10 +1,12 @@
 #include "Save_Slot_Widget.h"
+
 #include "Components/Button.h"
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
 #include "Decibel_Game_Instance/Decibel_Game_Instance.h"
 #include "ImageUtils.h"
 #include "Subsystems/Save_Manager_Subsystem/Save_Manager_Subsystem.h"
+#include "Subsystems/Localization_Manager_Subsystem/Localization_Manager_Subsystem.h"
 
 // USave_Slot_Widget
 //------------------------------------------------------------------------------------------------------------
@@ -32,14 +34,14 @@ void USave_Slot_Widget::NativeConstruct()
 void USave_Slot_Widget::NativeOnListItemObjectSet(UObject *list_item)
 {
 	USave_Slot_Widget *save_slot = 0;
-	
+
 	check(list_item != 0);
-	
+
 	IUserObjectListEntry::NativeOnListItemObjectSet(list_item);
 
 	save_slot = Cast<USave_Slot_Widget>(list_item);
 	check(save_slot != 0);
-	
+
 	Setup(save_slot->Slot_Index, save_slot->State);
 }
 //------------------------------------------------------------------------------------------------------------
@@ -47,9 +49,19 @@ void USave_Slot_Widget::Setup_Text()
 {
 	FText base_text;
 	FString full_text;
+	UGameInstance *game_inst = 0;
+	ULocalization_Manager_Subsystem *localization_manager = 0;
+
+	Super::NativeConstruct();
+
+	game_inst = GetGameInstance();
+	check(game_inst != 0);
+
+	localization_manager = game_inst->GetSubsystem<ULocalization_Manager_Subsystem>();
+	check(localization_manager != 0);
 
 	check(Slot_Number_Text != 0);
-	base_text = NSLOCTEXT("Main_Menu", "Slot", "SLOT");
+	base_text = localization_manager->Get_Value(TEXT("Slot"));
 	full_text = FString::Printf(TEXT("%s %d"), *base_text.ToString(), Slot_Index);
 
 	Slot_Number_Text->SetText(FText::FromString(full_text));
@@ -86,8 +98,7 @@ void USave_Slot_Widget::On_Clicked()
 
 	if (State == ESlot_Save_State::Load_Game)
 		decibel_game_inst->Load_Game(Slot_Index);
-	else
-		if (State == ESlot_Save_State::New_Game)
-			decibel_game_inst->New_Game(Slot_Index);
+	else if (State == ESlot_Save_State::New_Game)
+		decibel_game_inst->New_Game(Slot_Index);
 }
 //------------------------------------------------------------------------------------------------------------

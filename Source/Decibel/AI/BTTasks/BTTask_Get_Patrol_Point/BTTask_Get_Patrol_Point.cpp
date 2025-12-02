@@ -1,8 +1,9 @@
 #include "BTTask_Get_Patrol_Point.h"
+
 #include "AIController.h"
+#include "BehaviorTree/BehaviorTreeTypes.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Components/AI_Patrol_Component/AI_Patrol_Component.h"
-#include "BehaviorTree/BehaviorTreeTypes.h"
 
 // UBTTask_Get_Patrol_Point
 //------------------------------------------------------------------------------------------------------------
@@ -26,7 +27,7 @@ EBTNodeResult::Type UBTTask_Get_Patrol_Point::ExecuteTask(UBehaviorTreeComponent
 	check(npc != 0);
 
 	blackboard = owner_comp.GetBlackboardComponent();
-	check(blackboard!= 0);
+	check(blackboard != 0);
 
 	patrol_comp = npc->GetComponentByClass<UAI_Patrol_Component>();
 	check(patrol_comp != 0);

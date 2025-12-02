@@ -18,7 +18,7 @@ AHush::AHush()
 //------------------------------------------------------------------------------------------------------------
 void AHush::On_Save_Implementation(FActor_Save_Data &save_data)
 {
-	save_data.Actor_Path_Name = GetPathNameSafe(this);
+	save_data.Actor_Class_Name = GetClass()->GetName();
 	save_data.Transform = GetActorTransform();
 }
 //------------------------------------------------------------------------------------------------------------

@@ -3,11 +3,10 @@
 #include "Components/Button.h"
 #include "Components/ComboBoxString.h"
 #include "Components/TextBlock.h"
-#include "Decibel_Game_Instance/Decibel_Game_Instance.h"
-#include "Subsystems/Game_State_Manager_Subsystem/Game_State_Manager_Subsystem.h"
 #include "Data/Localization_Data/Localization_Data.h"
-#include "Kismet/KismetInternationalizationLibrary.h"
-#include "UI/Saves_List_Widget/Saves_List_Widget.h"
+#include "Decibel_Game_Instance/Decibel_Game_Instance.h"
+#include "Subsystems/Localization_Manager_Subsystem/Localization_Manager_Subsystem.h"
+#include "UI/Main_Menu/Saves_List_Widget/Saves_List_Widget.h"
 
 // UMain_Menu_Buttons_Widget
 //------------------------------------------------------------------------------------------------------------
@@ -17,7 +16,20 @@ UMain_Menu_Buttons_Widget::UMain_Menu_Buttons_Widget(const FObjectInitializer &o
 //------------------------------------------------------------------------------------------------------------
 void UMain_Menu_Buttons_Widget::NativeConstruct()
 {
+	ELanguage curr_language;
+	UGameInstance *game_inst = 0;
+
 	Super::NativeConstruct();
+
+	game_inst = GetGameInstance();
+	check(game_inst != 0);
+
+	Localization_Manager = game_inst->GetSubsystem<ULocalization_Manager_Subsystem>();
+	check(Localization_Manager != 0);
+	Localization_Manager->On_Language_Changed.AddDynamic(this, &UMain_Menu_Buttons_Widget::Update_Text);
+
+	Decibel_Game_Inst = GetGameInstance<UDecibel_Game_Instance>();
+	check(Decibel_Game_Inst != 0);
 
 	check(New_Game_Button != 0);
 	New_Game_Button->OnClicked.AddDynamic(this, &UMain_Menu_Buttons_Widget::On_New_Game_Clicked);
@@ -29,33 +41,40 @@ void UMain_Menu_Buttons_Widget::NativeConstruct()
 	Quit_Game_Button->OnClicked.AddDynamic(this, &UMain_Menu_Buttons_Widget::On_Quit_Game_Clicked);
 
 	Setup_Combo_Box();
-	Update_Text();
 
-	Decibel_Game_Inst = GetGameInstance<UDecibel_Game_Instance>();
-	check(Decibel_Game_Inst != 0);
+	curr_language = Localization_Manager->Get_Language();
+	Update_Text(curr_language);
 }
 //------------------------------------------------------------------------------------------------------------
 void UMain_Menu_Buttons_Widget::Setup_Combo_Box()
 {
+	ELanguage curr_language_code;
+
 	check(Languages_Combo_Box != 0);
 	Languages_Combo_Box->OnSelectionChanged.AddDynamic(this, &UMain_Menu_Buttons_Widget::Change_Language);
 
 	for (const auto &language_pair : FLocalization_Data::Languages)
 		Languages_Combo_Box->AddOption(language_pair.Key);
 
-	Languages_Combo_Box->SetSelectedOption(FLocalization_Data::Languages.begin()->Key);
+	curr_language_code = Localization_Manager->Get_Language();
+	const FString *curr_language = FLocalization_Data::Reverse_Languages.Find(curr_language_code);
+	check(curr_language != 0);
+
+	Languages_Combo_Box->SetSelectedOption(*curr_language);
 }
 //------------------------------------------------------------------------------------------------------------
-void UMain_Menu_Buttons_Widget::Update_Text()
+void UMain_Menu_Buttons_Widget::Update_Text(ELanguage new_language)
 {
+	check(Localization_Manager != 0);
+
 	check(New_Game_Text != 0);
-	New_Game_Text->SetText(NSLOCTEXT("Main_Menu", "New_Game", "NEW GAME"));
+	New_Game_Text->SetText(Localization_Manager->Get_Value(TEXT("New_Game")));
 
 	check(Load_Game_Text != 0);
-	Load_Game_Text->SetText(NSLOCTEXT("Main_Menu", "Load_Game", "LOAD GAME"));
+	Load_Game_Text->SetText(Localization_Manager->Get_Value(TEXT("Load_Game")));
 
 	check(Quit_Game_Text != 0);
-	Quit_Game_Text->SetText(NSLOCTEXT("Main_Menu", "Quit_Game", "QUIT GAME"));
+	Quit_Game_Text->SetText(Localization_Manager->Get_Value(TEXT("Quit_Game")));
 }
 //------------------------------------------------------------------------------------------------------------
 void UMain_Menu_Buttons_Widget::On_New_Game_Clicked()
@@ -76,11 +95,16 @@ void UMain_Menu_Buttons_Widget::On_Quit_Game_Clicked()
 //------------------------------------------------------------------------------------------------------------
 void UMain_Menu_Buttons_Widget::Change_Language(FString new_language, ESelectInfo::Type SelectionType)
 {
-	FString culture_code = FLocalization_Data::Languages[new_language];
+	UGameInstance *game_inst = 0;
+	ULocalization_Manager_Subsystem *localization_manager_subsys = 0; 
 
-	UKismetInternationalizationLibrary::SetCurrentCulture(culture_code, true);
-	Update_Text();
+	game_inst = GetGameInstance();
+	check(game_inst != 0);
 
-	On_Language_Changed.Broadcast();
+	localization_manager_subsys = game_inst->GetSubsystem<ULocalization_Manager_Subsystem>();
+	check(localization_manager_subsys != 0);
+
+	ELanguage new_language_code = FLocalization_Data::Languages[new_language];
+	localization_manager_subsys->Set_Language(new_language_code);
 }
 //------------------------------------------------------------------------------------------------------------

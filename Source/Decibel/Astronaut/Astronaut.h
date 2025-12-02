@@ -1,9 +1,8 @@
 #pragma once
 
+#include "Components/Footsteps_Sound_Component/Footsteps_Sound_Component.h"
 #include "GameFramework/Character.h"
 #include "Interfaces/Saveable_Actor_Interface/Saveable_Actor_Interface.h"
-
-#include "Components/Footsteps_Sound_Component/Footsteps_Sound_Component.h"
 
 #include "Astronaut.generated.h"
 
@@ -26,7 +25,7 @@ UCLASS() class DECIBEL_API AAstronaut: public ACharacter, public ISaveable_Actor
 public:
 	AAstronaut();
 	virtual void On_Save_Implementation(FActor_Save_Data &save_data) override;
-    virtual void On_Load_Implementation(const FActor_Save_Data &save_data) override;
+	virtual void On_Load_Implementation(const FActor_Save_Data &save_data) override;
 
 protected:
 	virtual void Tick(float delta_time) override;

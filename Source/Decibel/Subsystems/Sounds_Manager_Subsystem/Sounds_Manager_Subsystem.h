@@ -5,7 +5,7 @@
 
 #include "Sounds_Manager_Subsystem.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FSound_Stimulus_Delegate, const FSound_Stimulus &, Sound);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FSound_Stimulus_Delegate, const FSound_Stimulus &, sound);
 
 // USounds_Manager_Subsystem
 //------------------------------------------------------------------------------------------------------------

@@ -50,7 +50,7 @@ void UAI_Hearing_Component::Process_Sound_Stimulus(const FSound_Stimulus &sound)
 		blackboard = AI_Controller->GetBlackboardComponent();
 		check(blackboard != 0);
 
-		if (!blackboard->GetValueAsBool("Has_Heard_Sound") )
+		if (!blackboard->GetValueAsBool("Has_Heard_Sound"))
 			AI_Controller->StopMovement();
 
 		blackboard->SetValueAsVector("Curr_Heard_Sound_Pos", sound.Pos);

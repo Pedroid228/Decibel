@@ -12,7 +12,7 @@ AControlled_Door::AControlled_Door(): Min_Offset(0.0), Max_Offset(50.0)
 	check(Mesh != 0);
 	Mesh->SetupAttachment(Root_Scene);
 
-    PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = false;
 }
 //------------------------------------------------------------------------------------------------------------
 void AControlled_Door::Update_Pos_Offset(double percent)
@@ -22,8 +22,8 @@ void AControlled_Door::Update_Pos_Offset(double percent)
 
 	curr_offset = FMath::Lerp(Min_Offset, Max_Offset, percent);
 
-    new_relative_pos = FVector(-curr_offset, 0.0, 0.0);
-    Mesh->SetRelativeLocation(new_relative_pos);
+	new_relative_pos = FVector(-curr_offset, 0.0, 0.0);
+	Mesh->SetRelativeLocation(new_relative_pos);
 }
 //------------------------------------------------------------------------------------------------------------
 void AControlled_Door::BeginPlay()

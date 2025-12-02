@@ -1,7 +1,7 @@
 #include "Saves_List_Widget.h"
-#include "UI/Save_Slot_Widget/Save_Slot_Widget.h"
-#include "Subsystems/Save_Manager_Subsystem/Save_Manager_Subsystem.h"
 
+#include "Subsystems/Save_Manager_Subsystem/Save_Manager_Subsystem.h"
+#include "UI/Main_Menu/Save_Slot_Widget/Save_Slot_Widget.h"
 
 // USaves_List_Widget
 //------------------------------------------------------------------------------------------------------------
@@ -11,12 +11,9 @@ USaves_List_Widget::USaves_List_Widget(const FObjectInitializer &object_initiali
 //------------------------------------------------------------------------------------------------------------
 void USaves_List_Widget::Set_State(ESlot_Save_State new_state)
 {
-	if (new_state != State)
-	{
-		Generated_Entries_Count = 0;
-		State = new_state;
-		Update();
-	}
+	Generated_Entries_Count = 0;
+	State = new_state;
+	Update();
 }
 //------------------------------------------------------------------------------------------------------------
 void USaves_List_Widget::Update()

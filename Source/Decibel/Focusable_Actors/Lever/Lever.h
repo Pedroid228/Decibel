@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Focusable_Actors/Focusable_Actor/Focusable_Actor.h"
+
 #include "Lever.generated.h"
 
 // ALever
@@ -12,7 +13,7 @@ UCLASS() class DECIBEL_API ALever: public AFocusable_Actor
 public:
 	ALever();
 	virtual void On_Save_Implementation(FActor_Save_Data &save_data) override;
-    virtual void On_Load_Implementation(const FActor_Save_Data &save_data) override;
+	virtual void On_Load_Implementation(const FActor_Save_Data &save_data) override;
 
 protected:
 	virtual void Tick(float delta_time);

@@ -22,3 +22,17 @@ void AMars_Station_Game_Mode::BeginPlay()
 	player_controller->bShowMouseCursor = false;
 }
 //------------------------------------------------------------------------------------------------------------
+bool AMars_Station_Game_Mode::SetPause(APlayerController* PC, FCanUnpause can_unpause_delegate)
+{
+	On_Pause.Broadcast(true);
+
+	return Super::SetPause(PC, can_unpause_delegate);
+}
+//------------------------------------------------------------------------------------------------------------
+bool AMars_Station_Game_Mode::ClearPause()
+{
+	On_Pause.Broadcast(false);
+
+	return Super::ClearPause();
+}
+//------------------------------------------------------------------------------------------------------------

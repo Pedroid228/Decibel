@@ -1,6 +1,7 @@
 #include "Focusable_Actor.h"
-#include "Components/StaticMeshComponent.h"
+
 #include "Components/SceneComponent.h"
+#include "Components/StaticMeshComponent.h"
 
 // AFocusable_Actor
 //------------------------------------------------------------------------------------------------------------
@@ -14,14 +15,14 @@ AFocusable_Actor::AFocusable_Actor(): Is_Interacting(false), Sensivity(1.0), Las
 	check(Mesh != 0);
 	Mesh->SetupAttachment(Root_Scene);
 
-    PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = true;
 	PrimaryActorTick.bStartWithTickEnabled = false;
 	SetActorTickEnabled(false);
 }
 //------------------------------------------------------------------------------------------------------------
 void AFocusable_Actor::On_Save_Implementation(FActor_Save_Data &save_data)
 {
-	save_data.Actor_Path_Name = GetPathNameSafe(this);
+	save_data.Actor_Class_Name = GetClass()->GetName();
 }
 //------------------------------------------------------------------------------------------------------------
 void AFocusable_Actor::Tick(float delta_time)
@@ -38,8 +39,8 @@ void AFocusable_Actor::Tick(float delta_time)
 	player_controller = world->GetFirstPlayerController();
 	check(player_controller != 0);
 
-    player_controller->GetMousePosition(current_mouse_pos.X, current_mouse_pos.Y);
-    Mouse_Move_Vector = current_mouse_pos - Last_Mouse_Position;
+	player_controller->GetMousePosition(current_mouse_pos.X, current_mouse_pos.Y);
+	Mouse_Move_Vector = current_mouse_pos - Last_Mouse_Position;
 
 	Last_Mouse_Position = current_mouse_pos;
 
@@ -75,20 +76,20 @@ void AFocusable_Actor::On_Interact_End_Implementation()
 {
 	Is_Interacting = false;
 	SetActorTickEnabled(false);
-	
+
 	check(Player_Controller != 0);
 	Player_Controller = 0;
 }
 //------------------------------------------------------------------------------------------------------------
 FVector AFocusable_Actor::Get_Grip_Socket_Pos()
 {
-    FVector grip_pos;
-    check(Mesh != 0);
+	FVector grip_pos;
+	check(Mesh != 0);
 	if (Mesh->DoesSocketExist(TEXT("Grip_Socket")))
-    {
-        grip_pos = Mesh->GetSocketLocation(TEXT("Grip_Socket") );
-        return grip_pos;
-    }
+	{
+		grip_pos = Mesh->GetSocketLocation(TEXT("Grip_Socket"));
+		return grip_pos;
+	}
 	else
 		return FVector::ZeroVector;
 }
@@ -102,13 +103,13 @@ void AFocusable_Actor::Update_Camera_To_Grip()
 	FRotator target_rotation;
 
 	grip_pos = Get_Grip_Socket_Pos();
-	
+
 	Player_Controller->GetPlayerViewPoint(player_view_pos, player_view_rotation);
 
 	to_target = grip_pos - player_view_pos;
-    target_rotation = to_target.Rotation();
+	target_rotation = to_target.Rotation();
 
-    Player_Controller->SetControlRotation(target_rotation);
+	Player_Controller->SetControlRotation(target_rotation);
 }
 //------------------------------------------------------------------------------------------------------------
 

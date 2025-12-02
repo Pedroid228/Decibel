@@ -19,13 +19,13 @@ UCLASS() class DECIBEL_API AHush: public ACharacter, public ISaveable_Actor_Inte
 public:
 	AHush();
 	virtual void On_Save_Implementation(FActor_Save_Data &save_data) override;
-    virtual void On_Load_Implementation(const FActor_Save_Data &save_data) override;
+	virtual void On_Load_Implementation(const FActor_Save_Data &save_data) override;
 	UBehaviorTree *Get_BT();
 
 protected:
 	virtual void BeginPlay();
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Components") UAI_Hearing_Component *Hearing_Component = 0;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Components") UAI_Patrol_Component *Patrol_Component = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Components") UAI_Hearing_Component *Hearing_Component = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Components") UAI_Patrol_Component *Patrol_Component = 0;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) UBehaviorTree *BT = 0;
 };
 //------------------------------------------------------------------------------------------------------------

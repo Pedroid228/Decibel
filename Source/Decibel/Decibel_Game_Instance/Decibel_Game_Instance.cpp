@@ -1,7 +1,9 @@
 #include "Decibel_Game_Instance.h"
+
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Subsystems/Save_Manager_Subsystem/Save_Manager_Subsystem.h"
+#include "Subsystems/Localization_Manager_Subsystem/Localization_Manager_Subsystem.h"
 
 // UDecibel_Game_Instance
 //------------------------------------------------------------------------------------------------------------
@@ -11,10 +13,16 @@ UDecibel_Game_Instance::UDecibel_Game_Instance(): Current_Game_Slot_Index(-1)
 //------------------------------------------------------------------------------------------------------------
 void UDecibel_Game_Instance::Init()
 {
+	ULocalization_Manager_Subsystem *localization_manager = 0;
+
 	Super::Init();
 
 	Save_Manager = GetSubsystem<USave_Manager_Subsystem>();
 	check(Save_Manager != 0);
+
+	localization_manager = GetSubsystem<ULocalization_Manager_Subsystem>();
+	check(localization_manager != 0);
+	localization_manager->Set_Language(ELanguage::En);
 }
 //------------------------------------------------------------------------------------------------------------
 void UDecibel_Game_Instance::Main_Menu()
@@ -26,9 +34,10 @@ void UDecibel_Game_Instance::New_Game(int32 slot_index)
 {
 	Open_Level(TEXT("Test_Map"));
 
-	FCoreUObjectDelegates::PostLoadMapWithWorld.AddWeakLambda(this, [this, slot_index](UWorld *world) { 
+	FCoreUObjectDelegates::PostLoadMapWithWorld.AddWeakLambda(this, [this, slot_index](UWorld *world) {
 		check(Save_Manager != 0);
 		Save_Manager->Save_Game(slot_index);
+		FCoreUObjectDelegates::PostLoadMapWithWorld.RemoveAll(this);
 	});
 
 	Current_Game_Slot_Index = slot_index;

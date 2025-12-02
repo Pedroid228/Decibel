@@ -1,4 +1,5 @@
 #include "Footsteps_Sound_Component.h"
+
 #include "Components/Sound_Emitter_Component/Sound_Emitter_Component.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -50,7 +51,7 @@ void UFootsteps_Sound_Component::Start_Footsteps()
 	check(world != 0);
 
 	world->GetTimerManager().ClearTimer(Footsteps_Timer_Handle);
-    world->GetTimerManager().SetTimer(Footsteps_Timer_Handle, this, &UFootsteps_Sound_Component::Play_Footstep_Sound, Curr_Footstep_Interval, true);
+	world->GetTimerManager().SetTimer(Footsteps_Timer_Handle, this, &UFootsteps_Sound_Component::Play_Footstep_Sound, Curr_Footstep_Interval, true);
 }
 //------------------------------------------------------------------------------------------------------------
 void UFootsteps_Sound_Component::Stop_Footsteps()
@@ -73,7 +74,7 @@ void UFootsteps_Sound_Component::Play_Footstep_Sound()
 	owner = GetOwner();
 	check(owner != 0)
 
-	owner_pos = owner->GetActorLocation();
+	    owner_pos = owner->GetActorLocation();
 
 	UGameplayStatics::PlaySoundAtLocation(this, Footstep_Sound, owner_pos);
 	Emit_Sound(owner, owner_pos);

@@ -4,9 +4,6 @@
 
 #include "Actor_Save_Data.generated.h"
 
-
-
-
 // FAstronaut_Save_Data
 //------------------------------------------------------------------------------------------------------------
 USTRUCT(BlueprintType) struct FAstronaut_Save_Data
@@ -18,9 +15,6 @@ USTRUCT(BlueprintType) struct FAstronaut_Save_Data
 };
 //------------------------------------------------------------------------------------------------------------
 
-
-
-
 // FActor_Component_Save_Data
 //------------------------------------------------------------------------------------------------------------
 USTRUCT(BlueprintType) struct FActor_Component_Save_Data
@@ -30,9 +24,6 @@ USTRUCT(BlueprintType) struct FActor_Component_Save_Data
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite) FString Component_Path_Name;
 };
 //------------------------------------------------------------------------------------------------------------
-
-
-
 
 // FActor_Save_Data
 //------------------------------------------------------------------------------------------------------------
@@ -44,11 +35,10 @@ USTRUCT(BlueprintType) struct FActor_Save_Data
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite) double Hand_Door_Offset;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite) double Lever_Angle;
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite) FString Actor_Path_Name;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite) double Handwheel_Angle;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite) FString Actor_Class_Name;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite) FTransform Transform;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite) FAstronaut_Save_Data Astronaut_Save_Data;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite) TArray<FActor_Component_Save_Data> Components_Save_Data;
-
 };
 //------------------------------------------------------------------------------------------------------------
