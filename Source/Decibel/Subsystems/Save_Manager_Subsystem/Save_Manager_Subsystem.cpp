@@ -42,15 +42,20 @@ void USave_Manager_Subsystem::Save_Game(int32 slot_index)
 	AJson_Utils::Write_Save_Data(save_path, decibel_save_data);
 }
 //------------------------------------------------------------------------------------------------------------
-void USave_Manager_Subsystem::Load_Save(int32 slot_index)
+bool USave_Manager_Subsystem::Load_Save(int32 slot_index)
 {
 	FString save_path;
 	FDecibel_Save_Data decibel_save_data;
 	UWorld *world = 0;
 
 	save_path = Get_Save_File_Path(slot_index);
+
+	IPlatformFile &platform_file = FPlatformFileManager::Get().GetPlatformFile();
+	if (!platform_file.FileExists(*save_path))
+		return false;
+
 	if (!AJson_Utils::Read_Save_Data(save_path, decibel_save_data))
-		return;
+		return false;
 
 	world = GetWorld();
 	check(world != 0);
@@ -61,6 +66,8 @@ void USave_Manager_Subsystem::Load_Save(int32 slot_index)
 		Load_Actors_Save(decibel_save_data);
 		FCoreUObjectDelegates::PostLoadMapWithWorld.RemoveAll(this);
 	});
+
+	return true;
 }
 //------------------------------------------------------------------------------------------------------------
 FString USave_Manager_Subsystem::Get_Screenshot_Path(int32 slot_index)

@@ -8,7 +8,7 @@ public class Decibel : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "AIModule", "GameplayTasks", "NavigationSystem", "UMG", "Slate", "SlateCore", "Json", "JsonUtilities", "StateTreeModule" });
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "AIModule", "GameplayTasks", "NavigationSystem", "UMG", "Slate", "SlateCore", "Json", "JsonUtilities", "StateTreeModule", "EngineCameras" });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 

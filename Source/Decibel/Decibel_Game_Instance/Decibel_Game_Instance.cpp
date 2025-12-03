@@ -46,9 +46,8 @@ void UDecibel_Game_Instance::New_Game(int32 slot_index)
 void UDecibel_Game_Instance::Load_Game(int32 slot_index)
 {
 	check(Save_Manager != 0);
-	Save_Manager->Load_Save(slot_index);
-
-	Current_Game_Slot_Index = slot_index;
+	if (Save_Manager->Load_Save(slot_index))
+		Current_Game_Slot_Index = slot_index;
 }
 //------------------------------------------------------------------------------------------------------------
 void UDecibel_Game_Instance::Save_Curr_Game()

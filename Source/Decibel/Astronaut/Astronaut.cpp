@@ -11,10 +11,11 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Interfaces/Trace_Interaction_Interface/Trace_Interaction_Interface.h"
 #include "Subsystems/Sounds_Manager_Subsystem/Sounds_Manager_Subsystem.h"
+#include "Shakes/LegacyCameraShake.h"
 
 // AAstronaut
 //------------------------------------------------------------------------------------------------------------
-AAstronaut::AAstronaut(): Walk_Speed(500.0), Run_Speed(700.0), Is_Input_Disabled(false), Astronaut_State(EAstronaut_State::Idle)
+AAstronaut::AAstronaut(): Walk_Speed(500.0), Run_Speed(700.0), Is_Input_Disabled(false), Astronaut_State(EAstronaut_State::None)
 {
 	USceneComponent *root_comp = 0;
 
@@ -60,6 +61,18 @@ void AAstronaut::On_Load_Implementation(const FActor_Save_Data &save_data)
 	SetActorTransform(save_data.Transform);
 }
 //------------------------------------------------------------------------------------------------------------
+void AAstronaut::BeginPlay()
+{
+	Super::BeginPlay();
+
+	check(Idle_Camera_Shake != 0);
+	check(Walk_Camera_Shake != 0);
+	check(Crouch_Camera_Shake != 0);
+	check(Run_Camera_Shake != 0);
+
+	Set_State(EAstronaut_State::Idle);
+}
+//------------------------------------------------------------------------------------------------------------
 void AAstronaut::Tick(float delta_time)
 {
 	FVector line_trace_start;
@@ -75,6 +88,9 @@ void AAstronaut::Tick(float delta_time)
 	line_trace_dir = player_view_rotation.Vector();
 
 	Trace_Interaction_Component->Frame_Line_Trace(line_trace_start, line_trace_dir);
+
+	check(Curr_Camera_Shake != 0);
+	player_controller->PlayerCameraManager->StartCameraShake(Curr_Camera_Shake);
 }
 //------------------------------------------------------------------------------------------------------------
 void AAstronaut::SetupPlayerInputComponent(UInputComponent *player_input_component)
@@ -129,18 +145,22 @@ void AAstronaut::Set_State(EAstronaut_State new_state)
 	switch (new_state)
 	{
 	case EAstronaut_State::Idle:
+		Curr_Camera_Shake = Idle_Camera_Shake;
 		break;
 
 	case EAstronaut_State::Walk:
 		Set_Character_Speed(Walk_Speed);
+		Curr_Camera_Shake = Walk_Camera_Shake;
 		break;
 
 	case EAstronaut_State::Crouch:
 		Crouch();
+		Curr_Camera_Shake = Crouch_Camera_Shake;
 		break;
 
 	case EAstronaut_State::Sprint:
 		Set_Character_Speed(Run_Speed);
+		Curr_Camera_Shake = Run_Camera_Shake;
 		break;
 
 	default:
