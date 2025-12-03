@@ -6,7 +6,7 @@ DEFINE_LOG_CATEGORY(Localization_Manager_Log);
 
 // ULocalization_Manager_Subsystem
 //------------------------------------------------------------------------------------------------------------
-FString ULocalization_Manager_Subsystem::Json_Dictionaries_Dir = TEXT("Localization/Decibel/");
+FString ULocalization_Manager_Subsystem::Json_Dictionaries_Dir = TEXT("Decibel/Localization/");
 //------------------------------------------------------------------------------------------------------------
 ULocalization_Manager_Subsystem::ULocalization_Manager_Subsystem(): Current_Language(ELanguage::None)
 {
