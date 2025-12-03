@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Focusable_Actors/Focusable_Actor/Focusable_Actor.h"
+#include "Interactable_Actors/Focusable_Actors/Focusable_Actor/Focusable_Actor.h"
 
 #include "Handwheel.generated.h"
 

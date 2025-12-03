@@ -2,10 +2,11 @@
 
 #include "CollisionQueryParams.h"
 #include "Interfaces/Trace_Interaction_Interface/Trace_Interaction_Interface.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 // UTrace_Interaction_Component
 //------------------------------------------------------------------------------------------------------------
-UTrace_Interaction_Component::UTrace_Interaction_Component(const FObjectInitializer &object_initializer): Super(object_initializer), Start(FVector::ZeroVector), End(FVector::ZeroVector), Length(100.0)
+UTrace_Interaction_Component::UTrace_Interaction_Component(const FObjectInitializer &object_initializer): Super(object_initializer), Start(FVector::ZeroVector), End(FVector::ZeroVector), Length(100.0), Sphere_Radius(10.0f)
 {
 }
 //------------------------------------------------------------------------------------------------------------
@@ -36,7 +37,6 @@ void UTrace_Interaction_Component::Frame_Line_Trace(const FVector &start, const 
 
 	end = start + direction * Length;
 
-	// DrawDebugLine(GetWorld(), start, end, FColor::Red, false, 0.5f); // !!! Debug
 	has_hit = GetWorld()->LineTraceSingleByChannel(hit_result, start, end, ECC_Visibility, trace_params);
 
 	if (has_hit)
@@ -60,9 +60,11 @@ void UTrace_Interaction_Component::Frame_Line_Trace(const FVector &start, const 
 		}
 	}
 	else
-	{
-		Curr_Actor = 0;
-		Curr_Component = 0;
-	}
+		if (Curr_Actor != 0)
+		{
+			ITrace_Interaction_Interface::Execute_On_Trace_Leave(Curr_Actor);
+			Curr_Actor = 0;
+			Curr_Component = 0;
+		}
 }
 //------------------------------------------------------------------------------------------------------------

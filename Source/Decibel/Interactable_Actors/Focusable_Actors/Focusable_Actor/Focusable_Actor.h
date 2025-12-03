@@ -1,39 +1,30 @@
 #pragma once
 
-#include "GameFramework/Actor.h"
+#include "Interactable_Actors/Interactable_Actor/Interactable_Actor.h"
 #include "Interfaces/Saveable_Actor_Interface/Saveable_Actor_Interface.h"
-#include "Interfaces/Trace_Interaction_Interface/Trace_Interaction_Interface.h"
-
 #include "Focusable_Actor.generated.h"
-
-class USceneComponent;
-class UStaticMeshComponent;
 
 // AFocusable_Actor
 //------------------------------------------------------------------------------------------------------------
-UCLASS() class DECIBEL_API AFocusable_Actor: public AActor, public ITrace_Interaction_Interface, public ISaveable_Actor_Interface
+UCLASS(Abstract) class DECIBEL_API AFocusable_Actor: public AInteractable_Actor, public ISaveable_Actor_Interface
 {
 	GENERATED_BODY()
 
 public:
 	AFocusable_Actor();
-	virtual void On_Save_Implementation(FActor_Save_Data &save_data) override;
+	virtual void On_Save_Implementation(FActor_Save_Data &save_data);
 
 protected:
 	virtual void Tick(float delta_time);
-	virtual void On_Trace_Hit_Implementation(AActor *interacting_actor, UPrimitiveComponent *hit_component);
-	virtual void On_Trace_Leave_Implementation();
 	virtual void On_Interact_Begin_Implementation(AActor *interacting_actor);
 	virtual void On_Interact_End_Implementation();
-	FVector Get_Grip_Socket_Pos();
+	virtual FVector Get_Grip_Socket_Pos();
 	void Update_Camera_To_Grip();
 
 	bool Is_Interacting;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) double Sensivity;
 	FVector2D Last_Mouse_Position;
 	FVector2D Mouse_Move_Vector;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly) USceneComponent *Root_Scene = 0;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly) UStaticMeshComponent *Mesh = 0;
 	APlayerController *Player_Controller = 0;
 };
 //------------------------------------------------------------------------------------------------------------

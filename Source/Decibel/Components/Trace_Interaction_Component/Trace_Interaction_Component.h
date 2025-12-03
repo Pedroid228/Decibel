@@ -17,6 +17,7 @@ public:
 	UPrimitiveComponent *Get_Interactable_Component() const;
 
 protected:
+	UPROPERTY(EditAnywhere) float Sphere_Radius;
 	UPROPERTY(EditAnywhere) double Length;
 
 private:

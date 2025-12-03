@@ -1,0 +1,49 @@
+#include "Interactable_Actor.h"
+
+#include "Components/SceneComponent.h"
+#include "Components/StaticMeshComponent.h"
+#include "Components/WidgetComponent.h"
+
+// AInteractable_Actor
+//------------------------------------------------------------------------------------------------------------
+AInteractable_Actor::AInteractable_Actor(): Interaction_Type(EInteraction_Type::None)
+{
+	Root_Scene = CreateDefaultSubobject<USceneComponent>(TEXT("Root_Scene_Comp"));
+	check(Root_Scene != 0);
+	SetRootComponent(Root_Scene);
+
+	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh_Comp"));
+	check(Mesh != 0);
+	Mesh->SetupAttachment(Root_Scene);
+
+	Interaction_Tip_Widget_Component = CreateDefaultSubobject<UWidgetComponent>(TEXT("Interaction_Tip_Widget_Comp"));
+	check(Interaction_Tip_Widget_Component != 0);
+
+	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bStartWithTickEnabled = false;
+	SetActorTickEnabled(false);
+}
+//------------------------------------------------------------------------------------------------------------
+EInteraction_Type AInteractable_Actor::Get_Interaction_Type_Implementation()
+{
+	return Interaction_Type;
+}
+//------------------------------------------------------------------------------------------------------------
+void AInteractable_Actor::BeginPlay()
+{
+	Super::BeginPlay();
+
+	check(Interaction_Tip_Widget_Component != 0);
+	Interaction_Tip_Widget_Component->SetVisibility(false);
+}
+//------------------------------------------------------------------------------------------------------------
+void AInteractable_Actor::On_Trace_Hit_Implementation(AActor *interacting_actor, UPrimitiveComponent *hit_component)
+{
+	Interaction_Tip_Widget_Component->SetVisibility(true);
+}
+//------------------------------------------------------------------------------------------------------------
+void AInteractable_Actor::On_Trace_Leave_Implementation()
+{
+	Interaction_Tip_Widget_Component->SetVisibility(false);
+}
+//------------------------------------------------------------------------------------------------------------

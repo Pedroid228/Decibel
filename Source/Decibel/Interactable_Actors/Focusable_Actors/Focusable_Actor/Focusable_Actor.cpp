@@ -1,23 +1,14 @@
 #include "Focusable_Actor.h"
 
-#include "Components/SceneComponent.h"
-#include "Components/StaticMeshComponent.h"
+#include "Components/WidgetComponent.h"
 
 // AFocusable_Actor
 //------------------------------------------------------------------------------------------------------------
 AFocusable_Actor::AFocusable_Actor(): Is_Interacting(false), Sensivity(1.0), Last_Mouse_Position(FVector2D::ZeroVector), Mouse_Move_Vector(FVector2D::ZeroVector)
 {
-	Root_Scene = CreateDefaultSubobject<USceneComponent>(TEXT("Root_Scene_Comp"));
-	check(Root_Scene != 0);
-	SetRootComponent(Root_Scene);
-
-	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh_Comp"));
-	check(Mesh != 0);
-	Mesh->SetupAttachment(Root_Scene);
-
-	PrimaryActorTick.bCanEverTick = true;
-	PrimaryActorTick.bStartWithTickEnabled = false;
-	SetActorTickEnabled(false);
+	Interaction_Type = EInteraction_Type::Hold_And_Drag;
+	check(Interaction_Tip_Widget_Component != 0);
+	Interaction_Tip_Widget_Component->SetupAttachment(Mesh, TEXT("Grip_Socket"));
 }
 //------------------------------------------------------------------------------------------------------------
 void AFocusable_Actor::On_Save_Implementation(FActor_Save_Data &save_data)
@@ -33,26 +24,21 @@ void AFocusable_Actor::Tick(float delta_time)
 
 	Super::Tick(delta_time);
 
-	world = GetWorld();
-	check(world != 0);
+	if (Is_Interacting)
+	{
+		world = GetWorld();
+		check(world != 0);
 
-	player_controller = world->GetFirstPlayerController();
-	check(player_controller != 0);
+		player_controller = world->GetFirstPlayerController();
+		check(player_controller != 0);
 
-	player_controller->GetMousePosition(current_mouse_pos.X, current_mouse_pos.Y);
-	Mouse_Move_Vector = current_mouse_pos - Last_Mouse_Position;
+		player_controller->GetMousePosition(current_mouse_pos.X, current_mouse_pos.Y);
+		Mouse_Move_Vector = current_mouse_pos - Last_Mouse_Position;
 
-	Last_Mouse_Position = current_mouse_pos;
+		Last_Mouse_Position = current_mouse_pos;
 
-	Update_Camera_To_Grip();
-}
-//------------------------------------------------------------------------------------------------------------
-void AFocusable_Actor::On_Trace_Hit_Implementation(AActor *interacting_actor, UPrimitiveComponent *hit_component)
-{
-}
-//------------------------------------------------------------------------------------------------------------
-void AFocusable_Actor::On_Trace_Leave_Implementation()
-{
+		Update_Camera_To_Grip();
+	}
 }
 //------------------------------------------------------------------------------------------------------------
 void AFocusable_Actor::On_Interact_Begin_Implementation(AActor *interacting_actor)
@@ -70,6 +56,8 @@ void AFocusable_Actor::On_Interact_Begin_Implementation(AActor *interacting_acto
 	check(Player_Controller != 0);
 
 	Update_Camera_To_Grip();
+
+	Interaction_Tip_Widget_Component->SetVisibility(false);
 }
 //------------------------------------------------------------------------------------------------------------
 void AFocusable_Actor::On_Interact_End_Implementation()
@@ -79,6 +67,8 @@ void AFocusable_Actor::On_Interact_End_Implementation()
 
 	check(Player_Controller != 0);
 	Player_Controller = 0;
+
+	Interaction_Tip_Widget_Component->SetVisibility(true);
 }
 //------------------------------------------------------------------------------------------------------------
 FVector AFocusable_Actor::Get_Grip_Socket_Pos()

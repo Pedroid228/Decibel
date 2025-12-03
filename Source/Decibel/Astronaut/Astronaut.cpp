@@ -1,6 +1,7 @@
 #include "Astronaut.h"
 
 #include "Camera/CameraComponent.h"
+#include "Camera/PlayerCameraManager.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/Sound_Emitter_Component/Sound_Emitter_Component.h"
 #include "Components/Trace_Interaction_Component/Trace_Interaction_Component.h"
@@ -15,7 +16,7 @@
 
 // AAstronaut
 //------------------------------------------------------------------------------------------------------------
-AAstronaut::AAstronaut(): Walk_Speed(500.0), Run_Speed(700.0), Is_Input_Disabled(false), Astronaut_State(EAstronaut_State::None)
+AAstronaut::AAstronaut(): Has_Keycard(false), Walk_Speed(500.0), Run_Speed(700.0), Is_Input_Disabled(false), Astronaut_State(EAstronaut_State::None)
 {
 	USceneComponent *root_comp = 0;
 
@@ -61,6 +62,11 @@ void AAstronaut::On_Load_Implementation(const FActor_Save_Data &save_data)
 	SetActorTransform(save_data.Transform);
 }
 //------------------------------------------------------------------------------------------------------------
+bool AAstronaut::Get_Has_Keycard()
+{
+	return Has_Keycard;
+}
+//------------------------------------------------------------------------------------------------------------
 void AAstronaut::BeginPlay()
 {
 	Super::BeginPlay();
@@ -79,6 +85,7 @@ void AAstronaut::Tick(float delta_time)
 	FVector line_trace_dir;
 	FRotator player_view_rotation;
 	APlayerController *player_controller = 0;
+	APlayerCameraManager *player_camera_manager = 0;
 
 	Super::Tick(delta_time);
 
@@ -89,8 +96,10 @@ void AAstronaut::Tick(float delta_time)
 
 	Trace_Interaction_Component->Frame_Line_Trace(line_trace_start, line_trace_dir);
 
+	player_camera_manager = player_controller->PlayerCameraManager;
+	check(player_camera_manager != 0);
 	check(Curr_Camera_Shake != 0);
-	player_controller->PlayerCameraManager->StartCameraShake(Curr_Camera_Shake);
+	player_camera_manager->StartCameraShake(Curr_Camera_Shake);
 }
 //------------------------------------------------------------------------------------------------------------
 void AAstronaut::SetupPlayerInputComponent(UInputComponent *player_input_component)
@@ -123,8 +132,10 @@ void AAstronaut::SetupPlayerInputComponent(UInputComponent *player_input_compone
 	enhanced_input_component->BindAction(IA_Sprint, ETriggerEvent::Triggered, this, &AAstronaut::On_Action_Sprint_Begin);
 	enhanced_input_component->BindAction(IA_Sprint, ETriggerEvent::Completed, this, &AAstronaut::On_Action_Sprint_End);
 
-	enhanced_input_component->BindAction(IA_Interact, ETriggerEvent::Triggered, this, &AAstronaut::On_Action_Interact_Begin);
-	enhanced_input_component->BindAction(IA_Interact, ETriggerEvent::Completed, this, &AAstronaut::On_Action_Interact_End);
+	enhanced_input_component->BindAction(IA_Instant_Interact, ETriggerEvent::Triggered, this, &AAstronaut::On_Action_Instant_Interact);
+
+	enhanced_input_component->BindAction(IA_Hold_Interact, ETriggerEvent::Triggered, this, &AAstronaut::On_Action_Hold_Interact_Begin);
+	enhanced_input_component->BindAction(IA_Hold_Interact, ETriggerEvent::Completed, this, &AAstronaut::On_Action_Hold_Interact_End);
 }
 //------------------------------------------------------------------------------------------------------------
 void AAstronaut::Set_State(EAstronaut_State new_state)
@@ -247,22 +258,18 @@ void AAstronaut::On_Action_Sprint_End()
 	}
 }
 //------------------------------------------------------------------------------------------------------------
-void AAstronaut::On_Action_Interact_Begin()
+void AAstronaut::On_Action_Instant_Interact()
 {
-	AActor *interactable_actor = 0;
-
-	check(Trace_Interaction_Component != 0);
-	interactable_actor = Trace_Interaction_Component->Get_Interactable_Actor();
-	if (interactable_actor != 0)
-	{
-		Interacting_Actor = interactable_actor;
-		ITrace_Interaction_Interface::Execute_On_Interact_Begin(interactable_actor, this);
-
-		Is_Input_Disabled = true;
-	}
+	Start_Interact_By_Type(EInteraction_Type::Instant);
 }
 //------------------------------------------------------------------------------------------------------------
-void AAstronaut::On_Action_Interact_End()
+void AAstronaut::On_Action_Hold_Interact_Begin()
+{
+	if (Start_Interact_By_Type(EInteraction_Type::Hold_And_Drag) )
+		Is_Input_Disabled = true;
+}
+//------------------------------------------------------------------------------------------------------------
+void AAstronaut::On_Action_Hold_Interact_End()
 {
 	if (Interacting_Actor != 0)
 	{
@@ -271,6 +278,30 @@ void AAstronaut::On_Action_Interact_End()
 
 		Is_Input_Disabled = false;
 	}
+}
+//------------------------------------------------------------------------------------------------------------
+bool AAstronaut::Start_Interact_By_Type(EInteraction_Type by_interaction_type)
+{
+	EInteraction_Type interaction_type;
+	AActor *interactable_actor = 0;
+
+	check(Trace_Interaction_Component != 0);
+	interactable_actor = Trace_Interaction_Component->Get_Interactable_Actor();
+
+	if (interactable_actor != 0)
+	{
+		interaction_type = ITrace_Interaction_Interface::Execute_Get_Interaction_Type(interactable_actor);
+
+		if (interaction_type != by_interaction_type)
+			return false;
+
+		Interacting_Actor = interactable_actor;
+		ITrace_Interaction_Interface::Execute_On_Interact_Begin(interactable_actor, this);
+
+		return true;
+	}
+
+	return false;
 }
 //------------------------------------------------------------------------------------------------------------
 void AAstronaut::Set_Character_Speed(double speed)

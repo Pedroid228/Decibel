@@ -3,7 +3,7 @@
 #include "Components/Footsteps_Sound_Component/Footsteps_Sound_Component.h"
 #include "GameFramework/Character.h"
 #include "Interfaces/Saveable_Actor_Interface/Saveable_Actor_Interface.h"
-
+#include "Data/Interaction_Type/Interaction_Type.h"
 #include "Astronaut.generated.h"
 
 class UInputMappingContext;
@@ -26,12 +26,14 @@ public:
 	AAstronaut();
 	virtual void On_Save_Implementation(FActor_Save_Data &save_data) override;
 	virtual void On_Load_Implementation(const FActor_Save_Data &save_data) override;
+	bool Get_Has_Keycard();
 
 protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float delta_time) override;
 	virtual void SetupPlayerInputComponent(UInputComponent *player_input_component) override;
-
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly) bool Has_Keycard;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) double Walk_Speed;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) double Run_Speed;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) USpringArmComponent *Spring_Arm = 0;
@@ -45,7 +47,8 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input) UInputAction *IA_Look = 0;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input) UInputAction *IA_Crouch = 0;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input) UInputAction *IA_Sprint = 0;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input) UInputAction *IA_Interact = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input) UInputAction *IA_Instant_Interact = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input) UInputAction *IA_Hold_Interact = 0;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Camera_Shake) TSubclassOf<ULegacyCameraShake> Idle_Camera_Shake = 0;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Camera_Shake) TSubclassOf<ULegacyCameraShake> Walk_Camera_Shake = 0;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Camera_Shake) TSubclassOf<ULegacyCameraShake> Crouch_Camera_Shake = 0;
@@ -60,9 +63,11 @@ private:
 	void On_Action_Crouch_End();
 	void On_Action_Sprint_Begin();
 	void On_Action_Sprint_End();
-	void On_Action_Interact_Begin();
-	void On_Action_Interact_End();
+	void On_Action_Instant_Interact();
+	void On_Action_Hold_Interact_Begin();
+	void On_Action_Hold_Interact_End();
 
+	bool Start_Interact_By_Type(EInteraction_Type by_interaction_type);
 	void Set_Character_Speed(double speed);
 
 	APlayerController *Get_Player_Controller();

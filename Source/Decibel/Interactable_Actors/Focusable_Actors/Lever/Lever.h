@@ -1,30 +1,29 @@
 #pragma once
 
-#include "Focusable_Actors/Focusable_Actor/Focusable_Actor.h"
+#include "Interactable_Actors/Focusable_Actors/Focusable_Actor/Focusable_Actor.h"
 
-#include "Hand_Door.generated.h"
+#include "Lever.generated.h"
 
-// AHand_Door
+// ALever
 //------------------------------------------------------------------------------------------------------------
-UCLASS() class DECIBEL_API AHand_Door: public AFocusable_Actor
+UCLASS() class DECIBEL_API ALever: public AFocusable_Actor
 {
 	GENERATED_BODY()
 
 public:
-	AHand_Door();
+	ALever();
 	virtual void On_Save_Implementation(FActor_Save_Data &save_data) override;
 	virtual void On_Load_Implementation(const FActor_Save_Data &save_data) override;
 
 protected:
 	virtual void Tick(float delta_time);
-	void Update_Offset();
+	void Update_Angle();
+	void Update_Rotation();
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly) double Min_Offset;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly) double Max_Offset;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly) double Min_Angle;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly) double Max_Angle;
 
 private:
-	void Update_Pos();
-
-	double Curr_Offset;
+	double Curr_Angle;
 };
 //------------------------------------------------------------------------------------------------------------
