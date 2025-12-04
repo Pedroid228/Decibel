@@ -159,11 +159,14 @@ void USave_Manager_Subsystem::Load_Actors_Save(const FDecibel_Save_Data &decibel
 //------------------------------------------------------------------------------------------------------------
 void USave_Manager_Subsystem::Load_Actor_Components_Save(AActor *actor, const FActor_Save_Data &actor_save_data)
 {
-	FString component_path_name;
-	TSet<UActorComponent *> actor_components;
-	TMap<FString, UActorComponent *> components_names_map;
+	FString component_class_name;
+	UActorComponent *component_to_load = 0;
+	TArray<UActorComponent *> actor_components;
+	TArray<UActorComponent *> *components_array = 0;
+	TMap<FString, TArray<UActorComponent *>> components_by_class;
 
 	check(actor != 0);
+	actor->GetComponents(actor_components);
 
 	for (UActorComponent *actor_component : actor_components)
 	{
@@ -171,16 +174,22 @@ void USave_Manager_Subsystem::Load_Actor_Components_Save(AActor *actor, const FA
 
 		if (actor_component->Implements<USaveable_Actor_Component_Interface>())
 		{
-			component_path_name = GetPathNameSafe(actor_component);
-			components_names_map.Add(component_path_name, actor_component);
+			component_class_name = actor_component->GetClass()->GetName();
+			components_by_class.FindOrAdd(component_class_name).Add(actor_component);
 		}
 	}
 
-	for (const FActor_Component_Save_Data &component_save_data : actor_save_data.Components_Save_Data)
+	for (const FActor_Component_Save_Data &actor_component_save_data : actor_save_data.Components_Save_Data)
 	{
-		UActorComponent **actor_component = components_names_map.Find(component_save_data.Component_Path_Name);
-		check(actor_component != 0 && *actor_component != 0);
-		ISaveable_Actor_Component_Interface::Execute_On_Load(*actor_component, component_save_data);
+		components_array = components_by_class.Find(actor_component_save_data.Component_Class_Name);
+		check(components_array != 0 && !components_array->IsEmpty());
+
+		component_to_load = (*components_array)[0];
+		check(component_to_load != 0);
+
+		components_array->RemoveAt(0);
+
+		ISaveable_Actor_Component_Interface::Execute_On_Load(component_to_load, actor_component_save_data);
 	}
 }
 //------------------------------------------------------------------------------------------------------------

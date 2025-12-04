@@ -6,7 +6,7 @@
 
 // UBTTask_Move_To_Last_Sound
 //------------------------------------------------------------------------------------------------------------
-UBTTask_Move_To_Last_Sound::UBTTask_Move_To_Last_Sound(const FObjectInitializer &object_initializer): Super(object_initializer), Is_Waiting(false), Wait_Time(2.0), Acceptance_Radius(10.0)
+UBTTask_Move_To_Last_Sound::UBTTask_Move_To_Last_Sound(const FObjectInitializer &object_initializer): Super(object_initializer), Acceptance_Radius(10.0)
 {
 	NodeName = TEXT("Move To Last Sound");
 	bNotifyTick = true;
@@ -45,17 +45,13 @@ void UBTTask_Move_To_Last_Sound::TickTask(UBehaviorTreeComponent &owner_comp, ui
 	last_sound_type = (ESound_Type)Blackboard->GetValueAsEnum(Curr_Sound_Type_Key.SelectedKeyName);
 	has_high_priority_sound = Blackboard->GetValueAsBool(Has_High_Priority_Sound_Key.SelectedKeyName);
 
-	if (Is_Waiting)
-		Waiting(owner_comp, delta_seconds);
-
 	if (has_high_priority_sound)
 	{
 		if (last_sound_type == ESound_Type::High_Priority && new_target_pos != Curr_Target_Pos)  // Only high priority sound can replace other high priority sound
 			Start_Move_To_Target(new_target_pos);
 	}
 	else
-	{  // No high priority, reaction on all sound
-
+	{
 		if (new_target_pos != Curr_Target_Pos)
 			Start_Move_To_Target(new_target_pos);
 	}
@@ -67,15 +63,7 @@ void UBTTask_Move_To_Last_Sound::TickTask(UBehaviorTreeComponent &owner_comp, ui
 	is_moving = AI_Controller->IsFollowingAPath();
 
 	if (!is_moving)
-	{  // Start Waiting
-
-		Is_Waiting = true;
-	}
-	else
-	{
-		Curr_Wait_Time = 0.0f;
-		Is_Waiting = false;
-	}
+		Complete_Task(owner_comp);
 }
 //------------------------------------------------------------------------------------------------------------
 void UBTTask_Move_To_Last_Sound::Start_Move_To_Target(const FVector &new_target_pos)
@@ -83,14 +71,6 @@ void UBTTask_Move_To_Last_Sound::Start_Move_To_Target(const FVector &new_target_
 	check(AI_Controller != 0);
 	AI_Controller->MoveToLocation(new_target_pos, Acceptance_Radius);
 	Curr_Target_Pos = new_target_pos;
-}
-//------------------------------------------------------------------------------------------------------------
-void UBTTask_Move_To_Last_Sound::Waiting(UBehaviorTreeComponent &owner_comp, float delta_seconds)
-{
-	Curr_Wait_Time += delta_seconds;
-
-	if (Curr_Wait_Time >= Wait_Time)
-		Complete_Task(owner_comp);
 }
 //------------------------------------------------------------------------------------------------------------
 void UBTTask_Move_To_Last_Sound::Complete_Task(UBehaviorTreeComponent &owner_comp)

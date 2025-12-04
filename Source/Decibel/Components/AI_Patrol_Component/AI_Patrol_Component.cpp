@@ -9,6 +9,17 @@ UAI_Patrol_Component::UAI_Patrol_Component(const FObjectInitializer &object_init
 {
 }
 //------------------------------------------------------------------------------------------------------------
+void UAI_Patrol_Component::On_Save_Implementation(FActor_Component_Save_Data &save_data)
+{
+	save_data.Component_Class_Name = GetClass()->GetName();
+	save_data.Patrol_Point_Index = Curr_Point_Index;
+}
+//------------------------------------------------------------------------------------------------------------
+void UAI_Patrol_Component::On_Load_Implementation(const FActor_Component_Save_Data &save_data)
+{
+	Curr_Point_Index = save_data.Patrol_Point_Index - 1;
+}
+//------------------------------------------------------------------------------------------------------------
 FVector UAI_Patrol_Component::Get_Target_Point()
 {
 	FVector new_target_point;

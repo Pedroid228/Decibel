@@ -11,6 +11,18 @@ UAI_Hearing_Component::UAI_Hearing_Component(const FObjectInitializer &object_in
 	PrimaryComponentTick.bCanEverTick = true;
 }
 //------------------------------------------------------------------------------------------------------------
+void UAI_Hearing_Component::On_Save_Implementation(FActor_Component_Save_Data &save_data)
+{
+	save_data.Component_Class_Name = GetClass()->GetName();
+	save_data.Hearing_Component_Save_Data = Hearing_Component_Save_Data;
+}
+//------------------------------------------------------------------------------------------------------------
+void UAI_Hearing_Component::On_Load_Implementation(const FActor_Component_Save_Data &save_data)
+{
+	Hearing_Component_Save_Data = save_data.Hearing_Component_Save_Data;
+	Update_Blackboard();
+}
+//------------------------------------------------------------------------------------------------------------
 void UAI_Hearing_Component::BeginPlay()
 {
 	UGameInstance *game_instance = 0;
@@ -50,15 +62,33 @@ void UAI_Hearing_Component::Process_Sound_Stimulus(const FSound_Stimulus &sound)
 		blackboard = AI_Controller->GetBlackboardComponent();
 		check(blackboard != 0);
 
-		if (!blackboard->GetValueAsBool("Has_Heard_Sound"))
+		Hearing_Component_Save_Data.Has_Heard_Sound = blackboard->GetValueAsBool("Has_Heard_Sound");
+
+		if (!Hearing_Component_Save_Data.Has_Heard_Sound)
 			AI_Controller->StopMovement();
 
-		blackboard->SetValueAsVector("Curr_Heard_Sound_Pos", sound.Pos);
-		blackboard->SetValueAsEnum("Curr_Heard_Sound_Type", (uint8)sound.Type);
-		blackboard->SetValueAsBool("Has_Heard_Sound", true);
+		Hearing_Component_Save_Data.Curr_Heard_Sound_Pos = sound.Pos;
+		Hearing_Component_Save_Data.Curr_Heard_Sound_Type = sound.Type;
+		Hearing_Component_Save_Data.Has_Heard_Sound = true;
 
-		if (sound.Type == ESound_Type::High_Priority)
-			blackboard->SetValueAsBool("Has_High_Priority_Sound", true);
+		Update_Blackboard();
+
+		if (Hearing_Component_Save_Data.Curr_Heard_Sound_Type == ESound_Type::High_Priority)
+			Hearing_Component_Save_Data.Has_High_Priority_Sound = true;
 	}
+}
+//------------------------------------------------------------------------------------------------------------
+void UAI_Hearing_Component::Update_Blackboard()
+{
+	UBlackboardComponent *blackboard = 0;
+
+	check(AI_Controller != 0);
+	blackboard = AI_Controller->GetBlackboardComponent();
+	check(blackboard != 0);
+
+	blackboard->SetValueAsVector("Curr_Heard_Sound_Pos", Hearing_Component_Save_Data.Curr_Heard_Sound_Pos);
+	blackboard->SetValueAsEnum("Curr_Heard_Sound_Type", (uint8)Hearing_Component_Save_Data.Curr_Heard_Sound_Type);
+	blackboard->SetValueAsBool("Has_Heard_Sound", Hearing_Component_Save_Data.Has_Heard_Sound);
+	blackboard->SetValueAsBool("Has_High_Priority_Sound", Hearing_Component_Save_Data.Has_High_Priority_Sound);
 }
 //------------------------------------------------------------------------------------------------------------

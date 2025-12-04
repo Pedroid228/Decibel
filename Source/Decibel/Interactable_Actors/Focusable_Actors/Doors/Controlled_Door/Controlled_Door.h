@@ -20,6 +20,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) double Min_Offset;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) double Max_Offset;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly) USceneComponent *Root_Scene = 0;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly) UStaticMeshComponent *Mesh = 0;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly) UStaticMeshComponent *Left_Mesh = 0;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly) UStaticMeshComponent *Right_Mesh = 0;
 };
 //------------------------------------------------------------------------------------------------------------

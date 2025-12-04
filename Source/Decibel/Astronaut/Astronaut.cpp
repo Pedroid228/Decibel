@@ -2,6 +2,7 @@
 
 #include "Camera/CameraComponent.h"
 #include "Camera/PlayerCameraManager.h"
+#include "Components/CapsuleComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/Sound_Emitter_Component/Sound_Emitter_Component.h"
 #include "Components/Trace_Interaction_Component/Trace_Interaction_Component.h"
@@ -10,16 +11,23 @@
 #include "EnhancedInputSubsystems.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
-#include "Interfaces/Trace_Interaction_Interface/Trace_Interaction_Interface.h"
-#include "Subsystems/Sounds_Manager_Subsystem/Sounds_Manager_Subsystem.h"
-#include "Shakes/LegacyCameraShake.h"
 #include "Interactable_Actors/Sound_Detector/Sound_Detector.h"
+#include "Interfaces/Trace_Interaction_Interface/Trace_Interaction_Interface.h"
+#include "Shakes/LegacyCameraShake.h"
+#include "Subsystems/Sounds_Manager_Subsystem/Sounds_Manager_Subsystem.h"
+#include "Decibel_Game_Instance/Decibel_Game_Instance.h"
 
 // AAstronaut
 //------------------------------------------------------------------------------------------------------------
 AAstronaut::AAstronaut(): Has_Keycard(false), Walk_Speed(500.0), Run_Speed(700.0), Is_Input_Disabled(false), Astronaut_State(EAstronaut_State::None)
 {
+	UCapsuleComponent *player_capsule;
+
 	check(RootComponent != 0);
+
+	player_capsule = GetCapsuleComponent();
+	check(player_capsule != 0);
+	player_capsule->OnComponentHit.AddDynamic(this, &AAstronaut::On_Capsule_Hit);
 
 	Spring_Arm = CreateDefaultSubobject<USpringArmComponent>(TEXT("Spring_Arm_Comp"));
 	check(Spring_Arm != 0);
@@ -265,7 +273,7 @@ void AAstronaut::On_Action_Instant_Interact()
 //------------------------------------------------------------------------------------------------------------
 void AAstronaut::On_Action_Hold_Interact_Begin()
 {
-	if (Start_Interact_By_Type(EInteraction_Type::Hold_And_Drag) )
+	if (Start_Interact_By_Type(EInteraction_Type::Hold_And_Drag))
 		Is_Input_Disabled = true;
 }
 //------------------------------------------------------------------------------------------------------------
@@ -324,9 +332,8 @@ bool AAstronaut::Start_Interact_By_Type(EInteraction_Type by_interaction_type)
 
 		if (interaction_type == EInteraction_Type::Instant)
 			Try_Attach_Sound_Detector(interactable_actor);
-		else
-			if (interaction_type == EInteraction_Type::Hold_And_Drag)
-				Interacting_Actor = interactable_actor;
+		else if (interaction_type == EInteraction_Type::Hold_And_Drag)
+			Interacting_Actor = interactable_actor;
 
 		return true;
 	}
@@ -355,6 +362,24 @@ void AAstronaut::Set_Character_Speed(double speed)
 	check(movement_comp != 0);
 
 	movement_comp->MaxWalkSpeed = speed;
+}
+//------------------------------------------------------------------------------------------------------------
+void AAstronaut::On_Capsule_Hit(UPrimitiveComponent *hit_component, AActor *other_actor, UPrimitiveComponent *other_comp, FVector normal_impulse, const FHitResult &hit)
+{
+	check(other_actor != 0);
+
+	if (other_actor->ActorHasTag(TEXT("Hush_Tag")))
+		Die();
+}
+//------------------------------------------------------------------------------------------------------------
+void AAstronaut::Die()
+{
+	UDecibel_Game_Instance *game_inst = 0;
+
+	game_inst = GetGameInstance<UDecibel_Game_Instance>();
+	check(game_inst != 0);
+
+	game_inst->Load_Curr_Game();
 }
 //------------------------------------------------------------------------------------------------------------
 APlayerController *AAstronaut::Get_Player_Controller()

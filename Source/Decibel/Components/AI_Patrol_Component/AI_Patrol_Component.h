@@ -1,19 +1,21 @@
 #pragma once
 
 #include "Components/ActorComponent.h"
-
+#include "Interfaces/Saveable_Actor_Component_Interface/Saveable_Actor_Component_Interface.h"
 #include "AI_Patrol_Component.generated.h"
 
 class APatrol_Points;
 
 // UAI_Patrol_Component
 //------------------------------------------------------------------------------------------------------------
-UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent)) class DECIBEL_API UAI_Patrol_Component: public UActorComponent
+UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent)) class DECIBEL_API UAI_Patrol_Component: public UActorComponent, public ISaveable_Actor_Component_Interface
 {
 	GENERATED_BODY()
 
 public:
 	UAI_Patrol_Component(const FObjectInitializer &object_initializer);
+	virtual void On_Save_Implementation(FActor_Component_Save_Data &save_data) override;
+	virtual void On_Load_Implementation(const FActor_Component_Save_Data &save_data) override;
 	FVector Get_Target_Point();
 
 protected:

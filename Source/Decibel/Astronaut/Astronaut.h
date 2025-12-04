@@ -73,7 +73,8 @@ private:
 	bool Start_Interact_By_Type(EInteraction_Type by_interaction_type);
 	void Try_Attach_Sound_Detector(AActor *actor);
 	void Set_Character_Speed(double speed);
-
+	UFUNCTION() void On_Capsule_Hit(UPrimitiveComponent *hit_component, AActor *other_actor, UPrimitiveComponent *other_comp, FVector normal_impulse, const FHitResult &hit);
+	void Die();
 	APlayerController *Get_Player_Controller();
 
 	bool Is_Input_Disabled;
