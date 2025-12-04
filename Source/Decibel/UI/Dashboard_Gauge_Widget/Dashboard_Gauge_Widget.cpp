@@ -9,6 +9,21 @@ UDashboard_Gauge_Widget::UDashboard_Gauge_Widget(const FObjectInitializer &objec
 {
 }
 //------------------------------------------------------------------------------------------------------------
+void UDashboard_Gauge_Widget::Set_Needle_Angles(double max_angle, double min_angle)
+{
+	Max_Angle = max_angle;
+	Min_Angle = min_angle;
+}
+//------------------------------------------------------------------------------------------------------------
+void UDashboard_Gauge_Widget::Set_Target_Ratio(double new_target_ratio)
+{
+	if (!FMath::IsNearlyEqual(Target_Ratio, new_target_ratio, 0.01f))
+	{
+		Target_Ratio = FMath::Clamp(new_target_ratio, 0.0, 1.0);
+		Is_Needle_Moving = true;
+	}
+}
+//------------------------------------------------------------------------------------------------------------
 void UDashboard_Gauge_Widget::NativeConstruct()
 {
 	Super::NativeConstruct();
@@ -20,15 +35,6 @@ void UDashboard_Gauge_Widget::NativeTick(const FGeometry &my_geometry, float del
 {
 	Super::NativeTick(my_geometry, delta_time);
 	Update_Needle(delta_time);
-}
-//------------------------------------------------------------------------------------------------------------
-void UDashboard_Gauge_Widget::Set_Target_Ratio(double new_target_ratio)
-{
-	if (!FMath::IsNearlyEqual(Target_Ratio, new_target_ratio, 0.01f))
-	{
-		Target_Ratio = FMath::Clamp(new_target_ratio, 0.0, 1.0);
-		Is_Needle_Moving = true;
-	}
 }
 //------------------------------------------------------------------------------------------------------------
 void UDashboard_Gauge_Widget::Update_Needle(float delta_time)

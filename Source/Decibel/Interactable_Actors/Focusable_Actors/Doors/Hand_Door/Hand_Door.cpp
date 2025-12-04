@@ -6,6 +6,10 @@
 AHand_Door::AHand_Door(): Min_Offset(0.0), Max_Offset(0.1), Curr_Offset(0.0)
 {
 	Curr_Offset = Min_Offset;
+
+	Interaction_Tip_Widget_Component->SetRelativeLocation(FVector(40.0, 15.0, 120.0));
+	Interaction_Tip_Widget_Component->SetRelativeRotation(FRotator(0.0, 90.0, 0.0));
+	Interaction_Tip_Widget_Component->SetRelativeScale3D(FVector{0.03});
 }
 //------------------------------------------------------------------------------------------------------------
 void AHand_Door::On_Save_Implementation(FActor_Save_Data &save_data)

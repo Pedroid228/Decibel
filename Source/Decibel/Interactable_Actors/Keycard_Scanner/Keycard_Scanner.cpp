@@ -1,8 +1,6 @@
 #include "Keycard_Scanner.h"
 #include "Interactable_Actors/Focusable_Actors/Doors/Locked_Door/Locked_Door.h"
 #include "Astronaut/Astronaut.h"
-#include "Components/SceneComponent.h"
-#include "Components/StaticMeshComponent.h"
 #include "Components/WidgetComponent.h"
 
 // AKeycard_Scanner

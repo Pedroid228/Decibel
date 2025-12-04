@@ -13,19 +13,17 @@
 #include "Interfaces/Trace_Interaction_Interface/Trace_Interaction_Interface.h"
 #include "Subsystems/Sounds_Manager_Subsystem/Sounds_Manager_Subsystem.h"
 #include "Shakes/LegacyCameraShake.h"
+#include "Interactable_Actors/Sound_Detector/Sound_Detector.h"
 
 // AAstronaut
 //------------------------------------------------------------------------------------------------------------
 AAstronaut::AAstronaut(): Has_Keycard(false), Walk_Speed(500.0), Run_Speed(700.0), Is_Input_Disabled(false), Astronaut_State(EAstronaut_State::None)
 {
-	USceneComponent *root_comp = 0;
-
-	root_comp = GetRootComponent();
-	check(root_comp != 0);
+	check(RootComponent != 0);
 
 	Spring_Arm = CreateDefaultSubobject<USpringArmComponent>(TEXT("Spring_Arm_Comp"));
 	check(Spring_Arm != 0);
-	Spring_Arm->SetupAttachment(root_comp);
+	Spring_Arm->SetupAttachment(RootComponent);
 	Spring_Arm->SetRelativeLocation(FVector(0.0, 0.0, 55.0));
 	Spring_Arm->TargetArmLength = 0.0f;
 	Spring_Arm->bUsePawnControlRotation = true;
@@ -36,9 +34,9 @@ AAstronaut::AAstronaut(): Has_Keycard(false), Walk_Speed(500.0), Run_Speed(700.0
 	check(Player_Camera != 0);
 	Player_Camera->SetupAttachment(Spring_Arm);
 
-	Arms_Mesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Arms_Mesh_Comp"));
-	check(Arms_Mesh != 0);
-	Arms_Mesh->SetupAttachment(Player_Camera);
+	Sound_Detector_Scene_Component = CreateDefaultSubobject<USceneComponent>(TEXT("Sound_Detector_Scene_Comp"));
+	check(Sound_Detector_Scene_Component != 0);
+	Sound_Detector_Scene_Component->SetupAttachment(Player_Camera);
 
 	Trace_Interaction_Component = CreateDefaultSubobject<UTrace_Interaction_Component>(TEXT("Trace_Interaction_Comp"));
 	check(Trace_Interaction_Component != 0);
@@ -136,6 +134,8 @@ void AAstronaut::SetupPlayerInputComponent(UInputComponent *player_input_compone
 
 	enhanced_input_component->BindAction(IA_Hold_Interact, ETriggerEvent::Triggered, this, &AAstronaut::On_Action_Hold_Interact_Begin);
 	enhanced_input_component->BindAction(IA_Hold_Interact, ETriggerEvent::Completed, this, &AAstronaut::On_Action_Hold_Interact_End);
+
+	enhanced_input_component->BindAction(IA_Put_Away_Sound_Detector, ETriggerEvent::Triggered, this, &AAstronaut::On_Action_Put_Away_Sound_Detector);
 }
 //------------------------------------------------------------------------------------------------------------
 void AAstronaut::Set_State(EAstronaut_State new_state)
@@ -280,6 +280,28 @@ void AAstronaut::On_Action_Hold_Interact_End()
 	}
 }
 //------------------------------------------------------------------------------------------------------------
+void AAstronaut::On_Action_Put_Away_Sound_Detector()
+{
+	bool is_hidden;
+
+	if (Sound_Detector == 0)
+		return;
+
+	if (Is_Sound_Detector_In_Arms)
+	{
+		is_hidden = true;
+		Is_Sound_Detector_In_Arms = false;
+	}
+	else
+	{
+		is_hidden = false;
+		Is_Sound_Detector_In_Arms = true;
+	}
+
+	Sound_Detector->Set_Active(Is_Sound_Detector_In_Arms);
+	Sound_Detector->SetActorHiddenInGame(is_hidden);
+}
+//------------------------------------------------------------------------------------------------------------
 bool AAstronaut::Start_Interact_By_Type(EInteraction_Type by_interaction_type)
 {
 	EInteraction_Type interaction_type;
@@ -295,13 +317,34 @@ bool AAstronaut::Start_Interact_By_Type(EInteraction_Type by_interaction_type)
 		if (interaction_type != by_interaction_type)
 			return false;
 
-		Interacting_Actor = interactable_actor;
+		if (interaction_type == EInteraction_Type::Hold_And_Drag && Is_Sound_Detector_In_Arms)
+			return false;
+
 		ITrace_Interaction_Interface::Execute_On_Interact_Begin(interactable_actor, this);
+
+		if (interaction_type == EInteraction_Type::Instant)
+			Try_Attach_Sound_Detector(interactable_actor);
+		else
+			if (interaction_type == EInteraction_Type::Hold_And_Drag)
+				Interacting_Actor = interactable_actor;
 
 		return true;
 	}
 
 	return false;
+}
+//------------------------------------------------------------------------------------------------------------
+void AAstronaut::Try_Attach_Sound_Detector(AActor *actor)
+{
+	if (Sound_Detector != 0)
+		return;
+
+	Sound_Detector = Cast<ASound_Detector>(actor);
+	if (Sound_Detector != 0)
+	{
+		Sound_Detector->AttachToComponent(Sound_Detector_Scene_Component, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+		Is_Sound_Detector_In_Arms = true;
+	}
 }
 //------------------------------------------------------------------------------------------------------------
 void AAstronaut::Set_Character_Speed(double speed)

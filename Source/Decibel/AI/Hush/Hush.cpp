@@ -9,6 +9,8 @@
 //------------------------------------------------------------------------------------------------------------
 AHush::AHush()
 {
+	Tags.Add(TEXT("Hush_Tag"));
+
 	Hearing_Component = CreateDefaultSubobject<UAI_Hearing_Component>(TEXT("Hearing_Comp"));
 	check(Hearing_Component != 0);
 

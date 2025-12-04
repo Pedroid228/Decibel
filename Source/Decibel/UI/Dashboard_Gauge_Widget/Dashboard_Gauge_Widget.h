@@ -8,12 +8,13 @@ class UImage;
 
 // UDashboard_Gauge_Widget
 //------------------------------------------------------------------------------------------------------------
-UCLASS() class DECIBEL_API UDashboard_Gauge_Widget: public UUserWidget
+UCLASS(Abstract) class DECIBEL_API UDashboard_Gauge_Widget: public UUserWidget
 {
 	GENERATED_BODY()
 
 public:
 	UDashboard_Gauge_Widget(const FObjectInitializer &object_initializer);
+	void Set_Needle_Angles(double max_angle, double min_angle);
 	UFUNCTION(BlueprintCallable) void Set_Target_Ratio(double new_target_ratio);
 
 protected:

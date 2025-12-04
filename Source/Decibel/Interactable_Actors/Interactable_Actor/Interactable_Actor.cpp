@@ -3,6 +3,7 @@
 #include "Components/SceneComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/WidgetComponent.h"
+#include "UI/Interaction_Widget/Interaction_Widget.h"
 
 // AInteractable_Actor
 //------------------------------------------------------------------------------------------------------------
@@ -31,9 +32,23 @@ EInteraction_Type AInteractable_Actor::Get_Interaction_Type_Implementation()
 //------------------------------------------------------------------------------------------------------------
 void AInteractable_Actor::BeginPlay()
 {
+	UUserWidget *interaction_user_widget = 0;
+	UInteraction_Widget *interaction_widget = 0;
 	Super::BeginPlay();
 
+	check(Interaction_Tip_Texture != 0);
+	check(Interaction_Widget_BP_Class != 0);
 	check(Interaction_Tip_Widget_Component != 0);
+	Interaction_Tip_Widget_Component->SetWidgetClass(Interaction_Widget_BP_Class);
+
+	interaction_user_widget = Interaction_Tip_Widget_Component->GetWidget();
+	check(interaction_user_widget != 0);
+
+	interaction_widget = Cast<UInteraction_Widget>(interaction_user_widget);
+	check(interaction_widget != 0);
+
+	interaction_widget->Set_Texture(Interaction_Tip_Texture);
+
 	Interaction_Tip_Widget_Component->SetVisibility(false);
 }
 //------------------------------------------------------------------------------------------------------------

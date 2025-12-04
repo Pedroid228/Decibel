@@ -14,6 +14,7 @@ class USpringArmComponent;
 class UTrace_Interaction_Component;
 class USound_Emitter_Component;
 class ULegacyCameraShake;
+class ASound_Detector;
 struct FInputActionValue;
 
 // AAstronaut
@@ -38,7 +39,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) double Run_Speed;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) USpringArmComponent *Spring_Arm = 0;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) UCameraComponent *Player_Camera = 0;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly) USkeletalMeshComponent *Arms_Mesh = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly) USceneComponent *Sound_Detector_Scene_Component = 0;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) UTrace_Interaction_Component *Trace_Interaction_Component = 0;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) UFootsteps_Sound_Component *Footsteps_Sound_Component = 0;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) USound_Emitter_Component *Sound_Emitter_Component = 0;
@@ -49,6 +50,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input) UInputAction *IA_Sprint = 0;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input) UInputAction *IA_Instant_Interact = 0;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input) UInputAction *IA_Hold_Interact = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input) UInputAction *IA_Put_Away_Sound_Detector = 0;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Camera_Shake) TSubclassOf<ULegacyCameraShake> Idle_Camera_Shake = 0;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Camera_Shake) TSubclassOf<ULegacyCameraShake> Walk_Camera_Shake = 0;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Camera_Shake) TSubclassOf<ULegacyCameraShake> Crouch_Camera_Shake = 0;
@@ -66,15 +68,19 @@ private:
 	void On_Action_Instant_Interact();
 	void On_Action_Hold_Interact_Begin();
 	void On_Action_Hold_Interact_End();
+	void On_Action_Put_Away_Sound_Detector();
 
 	bool Start_Interact_By_Type(EInteraction_Type by_interaction_type);
+	void Try_Attach_Sound_Detector(AActor *actor);
 	void Set_Character_Speed(double speed);
 
 	APlayerController *Get_Player_Controller();
 
 	bool Is_Input_Disabled;
+	bool Is_Sound_Detector_In_Arms;
 	EAstronaut_State Astronaut_State;
 	TSubclassOf<ULegacyCameraShake> Curr_Camera_Shake = 0;
+	ASound_Detector *Sound_Detector = 0;
 	AActor *Interacting_Actor = 0;
 };
 //------------------------------------------------------------------------------------------------------------
