@@ -7,6 +7,7 @@
 #include "Keycard_Scanner.generated.h"
 
 class ALocked_Door;
+class UPointLightComponent;
 
 // AKeycard_Scanner
 //------------------------------------------------------------------------------------------------------------
@@ -24,9 +25,13 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) EKeycard_Type Keycard_Type;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) double Open_Time_Sec;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) ALocked_Door *Locked_Door = 0;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly) UPointLightComponent *Red_Light = 0;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly) UPointLightComponent *Green_Light = 0;
+
 
 private:
 	void Block_Door();
+	void Update_Light(bool has_access);
 
 	bool Is_Unlocked;
 	FTimerHandle Door_Unlocked_Timer_Handle;

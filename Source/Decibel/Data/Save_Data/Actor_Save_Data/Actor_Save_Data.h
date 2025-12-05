@@ -54,7 +54,7 @@ USTRUCT(BlueprintType) struct FActor_Save_Data
 
 	FActor_Save_Data();
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite) bool Is_Keycard_Destroyed;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite) bool Is_Keycard_Collected;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite) double Hand_Door_Offset;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite) double Lever_Angle;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite) double Handwheel_Angle;

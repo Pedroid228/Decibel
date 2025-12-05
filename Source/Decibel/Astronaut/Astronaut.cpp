@@ -160,6 +160,8 @@ void AAstronaut::SetupPlayerInputComponent(UInputComponent *player_input_compone
 //------------------------------------------------------------------------------------------------------------
 void AAstronaut::Set_State(EAstronaut_State new_state)
 {
+	FVector velocity;
+
 	if (new_state == Astronaut_State)
 		return;
 
@@ -190,6 +192,10 @@ void AAstronaut::Set_State(EAstronaut_State new_state)
 		break;
 
 	case EAstronaut_State::Sprint:
+		velocity = GetVelocity();
+		if (velocity.IsNearlyZero())
+			return;
+
 		Set_Character_Speed(Run_Speed);
 		Curr_Camera_Shake = Run_Camera_Shake;
 		break;

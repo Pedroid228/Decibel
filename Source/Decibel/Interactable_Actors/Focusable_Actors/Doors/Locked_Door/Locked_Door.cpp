@@ -22,12 +22,17 @@ void ALocked_Door::Tick(float delta_time)
 
 	if (!Is_Unlocked && Curr_Offset != Min_Offset)
 	{
+		Is_Moving = true;
 		new_offset = FMath::FInterpConstantTo(Curr_Offset, Min_Offset, delta_time, Close_Speed);
 		Curr_Offset = new_offset;
+		Update_Sound_Playback(delta_time);
 		Update_Pos();
 
 		if (Curr_Offset == Min_Offset)
+		{
 			SetActorTickEnabled(false);
+			Is_Moving = false;
+		}
 	}
 }
 //------------------------------------------------------------------------------------------------------------
