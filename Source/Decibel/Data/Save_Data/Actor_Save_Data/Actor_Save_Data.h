@@ -1,7 +1,9 @@
 #pragma once
 
-#include "Misc/Guid.h"
+#include "Data/Keycard_Type/Keycard_Type.h"
 #include "Data/Sound_Stimulus/Sound_Stimulus.h"
+#include "Misc/Guid.h"
+
 #include "Actor_Save_Data.generated.h"
 
 // FAstronaut_Save_Data
@@ -10,13 +12,11 @@ USTRUCT(BlueprintType) struct FAstronaut_Save_Data
 {
 	GENERATED_BODY()
 
-	FAstronaut_Save_Data();
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite) bool Has_Key_Card;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite) bool Has_Sound_Detector;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite) bool Is_Sound_Detector_In_Arms;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite) TArray<EKeycard_Type> Keycards_Inventory;
 };
 //------------------------------------------------------------------------------------------------------------
-
-
-
 
 // FHearing_Component_Save_Data
 //------------------------------------------------------------------------------------------------------------
@@ -33,9 +33,6 @@ USTRUCT(BlueprintType) struct FHearing_Component_Save_Data
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite) FVector Curr_Heard_Sound_Pos;
 };
 //------------------------------------------------------------------------------------------------------------
-
-
-
 
 // FActor_Component_Save_Data
 //------------------------------------------------------------------------------------------------------------
@@ -57,6 +54,7 @@ USTRUCT(BlueprintType) struct FActor_Save_Data
 
 	FActor_Save_Data();
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite) bool Is_Keycard_Destroyed;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite) double Hand_Door_Offset;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite) double Lever_Angle;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite) double Handwheel_Angle;

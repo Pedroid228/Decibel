@@ -19,6 +19,7 @@ AInteractable_Actor::AInteractable_Actor(): Interaction_Type(EInteraction_Type::
 
 	Interaction_Tip_Widget_Component = CreateDefaultSubobject<UWidgetComponent>(TEXT("Interaction_Tip_Widget_Comp"));
 	check(Interaction_Tip_Widget_Component != 0);
+	Interaction_Tip_Widget_Component->SetupAttachment(Mesh);
 
 	PrimaryActorTick.bCanEverTick = true;
 	PrimaryActorTick.bStartWithTickEnabled = false;

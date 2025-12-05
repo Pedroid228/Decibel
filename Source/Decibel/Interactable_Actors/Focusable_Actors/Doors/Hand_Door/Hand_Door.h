@@ -19,11 +19,12 @@ protected:
 	virtual void Tick(float delta_time);
 	virtual void On_Trace_Hit_Implementation(AActor *interacting_actor, UPrimitiveComponent *hit_component);
 	virtual FVector Get_Grip_Socket_Pos();
-	virtual void Update_Offset();
+	virtual void Update_Offset(float delta_time);
 	void Update_Pos();
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) double Min_Offset;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) double Max_Offset;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly) double Max_Movement_Speed;
 	double Curr_Offset;
 
 private:

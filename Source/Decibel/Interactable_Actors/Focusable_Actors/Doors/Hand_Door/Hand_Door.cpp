@@ -1,15 +1,18 @@
 #include "Hand_Door.h"
+
+#include "Components/AudioComponent.h"
 #include "Components/WidgetComponent.h"
+#include "Sound/SoundBase.h"
 
 // AHand_Door
 //------------------------------------------------------------------------------------------------------------
-AHand_Door::AHand_Door(): Min_Offset(0.0), Max_Offset(0.1), Curr_Offset(0.0)
+AHand_Door::AHand_Door(): Min_Offset(0.0), Max_Offset(100.0), Max_Movement_Speed(40.0), Curr_Offset(0.0)
 {
 	Curr_Offset = Min_Offset;
 
 	Interaction_Tip_Widget_Component->SetRelativeLocation(FVector(40.0, 15.0, 120.0));
 	Interaction_Tip_Widget_Component->SetRelativeRotation(FRotator(0.0, 90.0, 0.0));
-	Interaction_Tip_Widget_Component->SetRelativeScale3D(FVector{0.03});
+	Interaction_Tip_Widget_Component->SetRelativeScale3D(FVector {0.03});
 }
 //------------------------------------------------------------------------------------------------------------
 void AHand_Door::On_Save_Implementation(FActor_Save_Data &save_data)
@@ -32,7 +35,7 @@ void AHand_Door::Tick(float delta_time)
 	Super::Tick(delta_time);
 
 	if (Is_Interacting)
-		Update_Offset();
+		Update_Offset(delta_time);
 }
 //------------------------------------------------------------------------------------------------------------
 void AHand_Door::On_Trace_Hit_Implementation(AActor *interacting_actor, UPrimitiveComponent *hit_component)
@@ -43,7 +46,7 @@ void AHand_Door::On_Trace_Hit_Implementation(AActor *interacting_actor, UPrimiti
 
 	Super::On_Trace_Hit_Implementation(interacting_actor, hit_component);
 
-	if (Is_Player_In_Front() )
+	if (Is_Player_In_Front())
 	{
 		rotation = FRotator(0.0, 90.0, 0.0);
 		socket_name = TEXT("Front_Grip_Socket");
@@ -68,7 +71,7 @@ FVector AHand_Door::Get_Grip_Socket_Pos()
 {
 	FVector grip_pos;
 
-	if (Is_Player_In_Front() )
+	if (Is_Player_In_Front())
 		grip_pos = Get_Socket_Pos_By_Name(TEXT("Front_Grip_Socket"));
 	else
 		grip_pos = Get_Socket_Pos_By_Name(TEXT("Back_Grip_Socket"));
@@ -76,17 +79,25 @@ FVector AHand_Door::Get_Grip_Socket_Pos()
 	return grip_pos;
 }
 //-----------------------------------------------------------------------------------------------------------
-void AHand_Door::Update_Offset()
+void AHand_Door::Update_Offset(float delta_time)
 {
-	double horizontal_movement;	
+	double movement_speed;
 
 	if (Is_Player_In_Front())
-		horizontal_movement = -Mouse_Move_Vector.X * Sensivity;
+		movement_speed = -Mouse_Move_Vector.X * Sensivity;
 	else
-		horizontal_movement = Mouse_Move_Vector.X * Sensivity;
+		movement_speed = Mouse_Move_Vector.X * Sensivity;
 
-	Curr_Offset = FMath::Clamp(Curr_Offset + horizontal_movement, Min_Offset, Max_Offset);
+	movement_speed = FMath::Clamp(movement_speed, -Max_Movement_Speed, Max_Movement_Speed);
 
+	if (FMath::Abs(movement_speed) > Sound_Start_Threashhold)
+		Is_Moving = true;
+	else
+		Is_Moving = false;
+
+	Curr_Offset = FMath::Clamp(Curr_Offset + movement_speed, Min_Offset, Max_Offset);
+
+	Update_Sound_Playback(delta_time);
 	Update_Pos();
 }
 //------------------------------------------------------------------------------------------------------------

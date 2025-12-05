@@ -31,10 +31,10 @@ void ALocked_Door::Tick(float delta_time)
 	}
 }
 //------------------------------------------------------------------------------------------------------------
-void ALocked_Door::Update_Offset()
+void ALocked_Door::Update_Offset(float delta_time)
 {
 	if (Is_Unlocked)
-		Super::Update_Offset();
+		Super::Update_Offset(delta_time);
 }
 //------------------------------------------------------------------------------------------------------------
 void ALocked_Door::On_Interact_End_Implementation()

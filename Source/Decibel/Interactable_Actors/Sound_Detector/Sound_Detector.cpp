@@ -9,6 +9,8 @@
 //------------------------------------------------------------------------------------------------------------
 ASound_Detector::ASound_Detector(): Min_Distance_To_Hush(200.0), Max_Distance_To_Hush(1500.0), Min_Needle_Angle(-60.0), Max_Needle_Angle(60.0), Is_Grabbed(false), Is_Active(false)
 {
+	Tags.Add(TEXT("Sound_Detector_Tag"));
+
 	Interaction_Type = EInteraction_Type::Instant;
 	check(Interaction_Tip_Widget_Component != 0);
 	Interaction_Tip_Widget_Component->SetupAttachment(Mesh);

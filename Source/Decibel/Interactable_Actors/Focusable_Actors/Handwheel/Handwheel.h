@@ -20,10 +20,11 @@ public:
 protected:
 	virtual void BeginPlay();
 	virtual void Tick(float delta_time);
-	void Update_Angle();
+	void Update_Angle(float delta_time);
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) double Min_Angle;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) double Max_Angle;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly) double Max_Rotation_Speed;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) AControlled_Door *Controlled_Door = 0;
 
 private:

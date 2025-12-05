@@ -4,6 +4,7 @@
 #include "GameFramework/Character.h"
 #include "Interfaces/Saveable_Actor_Interface/Saveable_Actor_Interface.h"
 #include "Data/Interaction_Type/Interaction_Type.h"
+#include "Data/Keycard_Type/Keycard_Type.h"
 #include "Astronaut.generated.h"
 
 class UInputMappingContext;
@@ -27,14 +28,14 @@ public:
 	AAstronaut();
 	virtual void On_Save_Implementation(FActor_Save_Data &save_data) override;
 	virtual void On_Load_Implementation(const FActor_Save_Data &save_data) override;
-	bool Get_Has_Keycard();
+	void Add_Keycard_By_Type(EKeycard_Type keycard_type);
+	bool Has_Keycard_Of_Type(EKeycard_Type keycard_type);
 
 protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float delta_time) override;
 	virtual void SetupPlayerInputComponent(UInputComponent *player_input_component) override;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly) bool Has_Keycard;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) double Walk_Speed;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) double Run_Speed;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) USpringArmComponent *Spring_Arm = 0;
@@ -73,13 +74,17 @@ private:
 	bool Start_Interact_By_Type(EInteraction_Type by_interaction_type);
 	void Try_Attach_Sound_Detector(AActor *actor);
 	void Set_Character_Speed(double speed);
+	void On_Load_Sound_Detector(bool has_sound_detector, bool is_sound_detector_in_arms);
+
 	UFUNCTION() void On_Capsule_Hit(UPrimitiveComponent *hit_component, AActor *other_actor, UPrimitiveComponent *other_comp, FVector normal_impulse, const FHitResult &hit);
 	void Die();
 	APlayerController *Get_Player_Controller();
 
 	bool Is_Input_Disabled;
 	bool Is_Sound_Detector_In_Arms;
+	bool Has_Sound_Detector;
 	EAstronaut_State Astronaut_State;
+	TArray<EKeycard_Type> Keycards_Inventory;
 	TSubclassOf<ULegacyCameraShake> Curr_Camera_Shake = 0;
 	ASound_Detector *Sound_Detector = 0;
 	AActor *Interacting_Actor = 0;

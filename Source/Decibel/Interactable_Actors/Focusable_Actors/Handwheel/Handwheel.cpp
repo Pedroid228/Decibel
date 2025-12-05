@@ -4,7 +4,7 @@
 
 // ALever
 //------------------------------------------------------------------------------------------------------------
-AHandwheel::AHandwheel(): Min_Angle(0.0), Max_Angle(360.0), Curr_Angle(0.0)
+AHandwheel::AHandwheel(): Min_Angle(0.0), Max_Angle(360.0), Max_Rotation_Speed(10.0), Curr_Angle(0.0)
 {
 	Curr_Angle = Min_Angle;
 }
@@ -38,12 +38,12 @@ void AHandwheel::Tick(float delta_time)
 
 	if (Is_Interacting)
 	{
-		Update_Angle();
+		Update_Angle(delta_time);
 		Update_Controlling_Door();
 	}
 }
 //------------------------------------------------------------------------------------------------------------
-void AHandwheel::Update_Angle()
+void AHandwheel::Update_Angle(float delta_time)
 {
 	double projected_movement;
 	double additive_rotation_angle;
@@ -68,7 +68,16 @@ void AHandwheel::Update_Angle()
 	projected_movement = FVector::DotProduct(world_mouse_move, tangent);
 	additive_rotation_angle = projected_movement * Sensivity;
 
+	additive_rotation_angle = FMath::Clamp(additive_rotation_angle, -Max_Rotation_Speed, Max_Rotation_Speed);
+
+	if (FMath::Abs(additive_rotation_angle) > Sound_Start_Threashhold)
+		Is_Moving = true;
+	else
+		Is_Moving = false;
+
 	Curr_Angle = FMath::Clamp(Curr_Angle + additive_rotation_angle, Min_Angle, Max_Angle);
+
+	Update_Sound_Playback(delta_time);
 
 	Update_Rotation();
 }

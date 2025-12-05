@@ -5,17 +5,16 @@
 
 // AKeycard_Scanner
 //------------------------------------------------------------------------------------------------------------
-AKeycard_Scanner::AKeycard_Scanner(): Open_Time_Sec(6.0), Is_Unlocked(false)
+AKeycard_Scanner::AKeycard_Scanner(): Keycard_Type(EKeycard_Type::None), Open_Time_Sec(6.0), Is_Unlocked(false)
 {
 	Interaction_Type = EInteraction_Type::Instant;
-	check(Interaction_Tip_Widget_Component != 0);
-	Interaction_Tip_Widget_Component->SetupAttachment(Mesh);
 }
 //------------------------------------------------------------------------------------------------------------
 void AKeycard_Scanner::BeginPlay()
 {
 	Super::BeginPlay();
 	check(Locked_Door != 0);
+	check(Keycard_Type != EKeycard_Type::None);
 }
 //------------------------------------------------------------------------------------------------------------
 void AKeycard_Scanner::On_Interact_Begin_Implementation(AActor *interacting_actor)
@@ -26,7 +25,7 @@ void AKeycard_Scanner::On_Interact_Begin_Implementation(AActor *interacting_acto
 
 	astronaut = Cast<AAstronaut>(interacting_actor);
 	check(astronaut != 0);
-	has_keycard = astronaut->Get_Has_Keycard();
+	has_keycard = astronaut->Has_Keycard_Of_Type(Keycard_Type);
 
 	check(Locked_Door != 0)
 	Locked_Door->Set_Lock(has_keycard);

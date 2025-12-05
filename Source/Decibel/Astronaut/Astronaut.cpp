@@ -16,10 +16,11 @@
 #include "Shakes/LegacyCameraShake.h"
 #include "Subsystems/Sounds_Manager_Subsystem/Sounds_Manager_Subsystem.h"
 #include "Decibel_Game_Instance/Decibel_Game_Instance.h"
+#include "Kismet/GameplayStatics.h"
 
 // AAstronaut
 //------------------------------------------------------------------------------------------------------------
-AAstronaut::AAstronaut(): Has_Keycard(false), Walk_Speed(500.0), Run_Speed(700.0), Is_Input_Disabled(false), Astronaut_State(EAstronaut_State::None)
+AAstronaut::AAstronaut(): Walk_Speed(500.0), Run_Speed(700.0), Is_Input_Disabled(false), Is_Sound_Detector_In_Arms(false), Has_Sound_Detector(false), Astronaut_State(EAstronaut_State::None)
 {
 	UCapsuleComponent *player_capsule;
 
@@ -60,17 +61,28 @@ void AAstronaut::On_Save_Implementation(FActor_Save_Data &save_data)
 {
 	save_data.Actor_Class_Name = GetClass()->GetName();
 	save_data.Transform = GetActorTransform();
-	save_data.Astronaut_Save_Data.Has_Key_Card = true;
+	save_data.Astronaut_Save_Data.Keycards_Inventory = Keycards_Inventory;
+	save_data.Astronaut_Save_Data.Has_Sound_Detector = Has_Sound_Detector;
+	save_data.Astronaut_Save_Data.Is_Sound_Detector_In_Arms = Is_Sound_Detector_In_Arms;
 }
 //------------------------------------------------------------------------------------------------------------
 void AAstronaut::On_Load_Implementation(const FActor_Save_Data &save_data)
 {
 	SetActorTransform(save_data.Transform);
+	Keycards_Inventory = save_data.Astronaut_Save_Data.Keycards_Inventory;
+	On_Load_Sound_Detector(save_data.Astronaut_Save_Data.Has_Sound_Detector, save_data.Astronaut_Save_Data.Is_Sound_Detector_In_Arms);
 }
 //------------------------------------------------------------------------------------------------------------
-bool AAstronaut::Get_Has_Keycard()
+void AAstronaut::Add_Keycard_By_Type(EKeycard_Type keycard_type)
 {
-	return Has_Keycard;
+	Keycards_Inventory.Add(keycard_type);
+}
+//------------------------------------------------------------------------------------------------------------
+bool AAstronaut::Has_Keycard_Of_Type(EKeycard_Type keycard_type)
+{
+	bool contains_keycard;
+	contains_keycard = Keycards_Inventory.Contains(keycard_type);
+	return contains_keycard;
 }
 //------------------------------------------------------------------------------------------------------------
 void AAstronaut::BeginPlay()
@@ -350,7 +362,9 @@ void AAstronaut::Try_Attach_Sound_Detector(AActor *actor)
 	if (Sound_Detector != 0)
 	{
 		Sound_Detector->AttachToComponent(Sound_Detector_Scene_Component, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+		Sound_Detector->SetActorEnableCollision(false);
 		Is_Sound_Detector_In_Arms = true;
+		Has_Sound_Detector = true;
 	}
 }
 //------------------------------------------------------------------------------------------------------------
@@ -362,6 +376,28 @@ void AAstronaut::Set_Character_Speed(double speed)
 	check(movement_comp != 0);
 
 	movement_comp->MaxWalkSpeed = speed;
+}
+//------------------------------------------------------------------------------------------------------------
+void AAstronaut::On_Load_Sound_Detector(bool has_sound_detector, bool is_sound_detector_in_arms)
+{
+	UWorld *world = 0;
+	TArray<AActor*> sound_detectors;
+
+	if (!has_sound_detector)
+		return;
+
+	world = GetWorld();
+	check(world != 0);
+
+	UGameplayStatics::GetAllActorsWithTag(GetWorld(), TEXT("Sound_Detector_Tag"), sound_detectors);
+	check(sound_detectors.Num() > 0);
+
+	check(sound_detectors[0] != 0);
+	Try_Attach_Sound_Detector(sound_detectors[0]);
+	check(Sound_Detector != 0);
+
+	Is_Sound_Detector_In_Arms = !is_sound_detector_in_arms;
+	On_Action_Put_Away_Sound_Detector();
 }
 //------------------------------------------------------------------------------------------------------------
 void AAstronaut::On_Capsule_Hit(UPrimitiveComponent *hit_component, AActor *other_actor, UPrimitiveComponent *other_comp, FVector normal_impulse, const FHitResult &hit)

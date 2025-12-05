@@ -15,7 +15,7 @@ public:
 
 protected:
 	virtual void Tick(float delta_time);
-	virtual void Update_Offset();
+	virtual void Update_Offset(float delta_time);
 	virtual void On_Interact_End_Implementation();
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) double Close_Speed;
