@@ -72,9 +72,9 @@ void UFootsteps_Sound_Component::Play_Footstep_Sound()
 	FVector owner_pos;
 
 	owner = GetOwner();
-	check(owner != 0)
+	check(owner != 0);
 
-	    owner_pos = owner->GetActorLocation();
+	owner_pos = owner->GetActorLocation();
 
 	UGameplayStatics::PlaySoundAtLocation(this, Footstep_Sound, owner_pos);
 	Emit_Sound(owner, owner_pos);

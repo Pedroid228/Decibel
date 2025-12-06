@@ -28,8 +28,8 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Interaction_Tip) UWidgetComponent *Interaction_Tip_Widget_Component = 0;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly) UStaticMeshComponent *Mesh = 0;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Interaction_Tip) TSubclassOf<UInteraction_Widget> Interaction_Widget_BP_Class = 0;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Interaction_Tip) UTexture2D *Interaction_Tip_Texture = 0;
-
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Interaction_Tip) UTexture2D *Interaction_Tip_Texture_RU = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Interaction_Tip) UTexture2D *Interaction_Tip_Texture_EN = 0;
 
 	EInteraction_Type Interaction_Type;
 };

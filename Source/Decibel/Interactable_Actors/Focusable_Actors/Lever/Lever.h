@@ -16,6 +16,7 @@ public:
 	virtual void On_Load_Implementation(const FActor_Save_Data &save_data) override;
 
 protected:
+	virtual void BeginPlay();
 	virtual void Tick(float delta_time);
 	void Update_Angle();
 	void Update_Rotation();

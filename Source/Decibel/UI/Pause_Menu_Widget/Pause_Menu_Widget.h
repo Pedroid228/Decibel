@@ -3,8 +3,7 @@
 #include "Blueprint/UserWidget.h"
 #include "Pause_Menu_Widget.generated.h"
 
-class UButton;
-class UTextBlock;
+class UDecibel_Button_Widget;
 class UDecibel_Game_Instance;
 
 // UPause_Menu_Widget
@@ -19,12 +18,9 @@ public:
 protected:
 	virtual void NativeConstruct() override;
 
-	UPROPERTY(meta = (BindWidget)) UButton *Main_Menu_Button = 0;
-	UPROPERTY(meta = (BindWidget)) UButton *Save_Game_Button = 0;
-	UPROPERTY(meta = (BindWidget)) UButton *Quit_Game_Button = 0;
-	UPROPERTY(meta = (BindWidget)) UTextBlock *Main_Menu_Button_Text = 0;
-	UPROPERTY(meta = (BindWidget)) UTextBlock *Save_Game_Button_Text = 0;
-	UPROPERTY(meta = (BindWidget)) UTextBlock *Quit_Game_Button_Text = 0;
+	UPROPERTY(meta = (BindWidget)) UDecibel_Button_Widget *Main_Menu_Button = 0;
+	UPROPERTY(meta = (BindWidget)) UDecibel_Button_Widget *Save_Game_Button = 0;
+	UPROPERTY(meta = (BindWidget)) UDecibel_Button_Widget *Quit_Game_Button = 0;
 
 private:
 	UFUNCTION() void On_Main_Menu_Clicked();

@@ -29,6 +29,10 @@ void USave_Slot_Widget::NativeConstruct()
 
 	check(Slot_Button != 0);
 	Slot_Button->OnClicked.AddDynamic(this, &USave_Slot_Widget::On_Clicked);
+
+	Slot_Button->OnHovered.AddDynamic(this, &USave_Slot_Widget::Set_Hovered_Image);
+	Slot_Button->OnUnhovered.AddDynamic(this, &USave_Slot_Widget::Set_Unhovered_Image);
+	Set_Unhovered_Image();
 }
 //------------------------------------------------------------------------------------------------------------
 void USave_Slot_Widget::NativeOnListItemObjectSet(UObject *list_item)
@@ -100,5 +104,19 @@ void USave_Slot_Widget::On_Clicked()
 		decibel_game_inst->Load_Game(Slot_Index);
 	else if (State == ESlot_Save_State::New_Game)
 		decibel_game_inst->New_Game(Slot_Index);
+}
+//------------------------------------------------------------------------------------------------------------
+void USave_Slot_Widget::Set_Hovered_Image()
+{
+	check(BG_Image != 0);
+	check(Hovered_Image != 0);
+	BG_Image->SetBrushFromTexture(Hovered_Image);
+}
+//------------------------------------------------------------------------------------------------------------
+void USave_Slot_Widget::Set_Unhovered_Image()
+{
+	check(BG_Image != 0);
+	check(Default_Image != 0);
+	BG_Image->SetBrushFromTexture(Default_Image);
 }
 //------------------------------------------------------------------------------------------------------------

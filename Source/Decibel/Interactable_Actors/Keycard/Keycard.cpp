@@ -20,6 +20,23 @@ void AKeycard::On_Load_Implementation(const FActor_Save_Data &save_data)
 		Hide();
 }
 //------------------------------------------------------------------------------------------------------------
+void AKeycard::OnConstruction(const FTransform &transform)
+{
+	Super::OnConstruction(transform);
+
+	if (Base_Color_Material == 0 || Type == EKeycard_Type::None)
+		return;
+
+	MI_Color = UMaterialInstanceDynamic::Create(Base_Color_Material, this);
+	check(MI_Color != 0);
+	check(Mesh != 0);
+	Mesh->SetMaterial(0, MI_Color);
+
+	const FLinearColor *new_color = FKeycard_Color_Data::Colors.Find(Type);
+	check(new_color != 0);
+	MI_Color->SetVectorParameterValue(TEXT("Color"), *new_color);
+}
+//------------------------------------------------------------------------------------------------------------
 void AKeycard::On_Interact_Begin_Implementation(AActor *interacting_actor)
 {
 	AAstronaut *astronaut = 0;

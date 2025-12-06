@@ -3,9 +3,10 @@
 // FSound_Stimulus
 //------------------------------------------------------------------------------------------------------------
 TMap<ESound_Type, double> FSound_Stimulus::Sounds_Range = {
-    {         ESound_Type::Walk,  35000.0},
-    {          ESound_Type::Run,  15000.0},
-    {         ESound_Type::Loud,  15000.0},
+    {         ESound_Type::Walk,   20000.0},
+    {          ESound_Type::Run,   20000.0},
+    {        ESound_Type::Wheel,   20000.0},
+    {         ESound_Type::Door,   20000.0},
     {ESound_Type::High_Priority, 100000.0}
 };
 //------------------------------------------------------------------------------------------------------------

@@ -1,8 +1,7 @@
 #include "Main_Menu_Buttons_Widget.h"
 
-#include "Components/Button.h"
 #include "Components/ComboBoxString.h"
-#include "Components/TextBlock.h"
+#include "UI/Decibel_Button_Widget/Decibel_Button_Widget.h"
 #include "Data/Localization_Data/Localization_Data.h"
 #include "Decibel_Game_Instance/Decibel_Game_Instance.h"
 #include "Subsystems/Localization_Manager_Subsystem/Localization_Manager_Subsystem.h"
@@ -32,13 +31,13 @@ void UMain_Menu_Buttons_Widget::NativeConstruct()
 	check(Decibel_Game_Inst != 0);
 
 	check(New_Game_Button != 0);
-	New_Game_Button->OnClicked.AddDynamic(this, &UMain_Menu_Buttons_Widget::On_New_Game_Clicked);
+	New_Game_Button->Get_On_Clicked().AddDynamic(this, &UMain_Menu_Buttons_Widget::On_New_Game_Clicked);
 
 	check(Load_Game_Button != 0);
-	Load_Game_Button->OnClicked.AddDynamic(this, &UMain_Menu_Buttons_Widget::On_Load_Game_Clicked);
+	Load_Game_Button->Get_On_Clicked().AddDynamic(this, &UMain_Menu_Buttons_Widget::On_Load_Game_Clicked);
 
 	check(Quit_Game_Button != 0);
-	Quit_Game_Button->OnClicked.AddDynamic(this, &UMain_Menu_Buttons_Widget::On_Quit_Game_Clicked);
+	Quit_Game_Button->Get_On_Clicked().AddDynamic(this, &UMain_Menu_Buttons_Widget::On_Quit_Game_Clicked);
 
 	Setup_Combo_Box();
 
@@ -67,14 +66,14 @@ void UMain_Menu_Buttons_Widget::Update_Text(ELanguage new_language)
 {
 	check(Localization_Manager != 0);
 
-	check(New_Game_Text != 0);
-	New_Game_Text->SetText(Localization_Manager->Get_Value(TEXT("New_Game")));
+	check(New_Game_Button != 0);
+	New_Game_Button->Set_Text_By_Key(TEXT("New_Game"));
 
-	check(Load_Game_Text != 0);
-	Load_Game_Text->SetText(Localization_Manager->Get_Value(TEXT("Load_Game")));
+	check(Load_Game_Button != 0);
+	Load_Game_Button->Set_Text_By_Key(TEXT("Load_Game"));
 
-	check(Quit_Game_Text != 0);
-	Quit_Game_Text->SetText(Localization_Manager->Get_Value(TEXT("Quit_Game")));
+	check(Quit_Game_Button != 0);
+	Quit_Game_Button->Set_Text_By_Key(TEXT("Quit_Game"));
 }
 //------------------------------------------------------------------------------------------------------------
 void UMain_Menu_Buttons_Widget::On_New_Game_Clicked()

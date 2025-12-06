@@ -40,6 +40,8 @@ void USave_Manager_Subsystem::Save_Game(int32 slot_index)
 
 	save_path = Get_Save_File_Path(slot_index);
 	AJson_Utils::Write_Save_Data(save_path, decibel_save_data);
+
+	On_Game_Saved.Broadcast();
 }
 //------------------------------------------------------------------------------------------------------------
 bool USave_Manager_Subsystem::Load_Save(int32 slot_index)

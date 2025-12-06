@@ -5,9 +5,8 @@
 #include "Data/Localization_Data/Localization_Data.h"
 #include "Main_Menu_Buttons_Widget.generated.h"
 
-class UButton;
+class UDecibel_Button_Widget;
 class UComboBoxString;
-class UTextBlock;
 class UDecibel_Game_Instance;
 class USaves_List_Widget;
 class ULocalization_Manager_Subsystem;
@@ -27,13 +26,11 @@ public:
 protected:
 	virtual void NativeConstruct() override;
 
-	UPROPERTY(meta = (BindWidget)) UButton *New_Game_Button = 0;
-	UPROPERTY(meta = (BindWidget)) UButton *Load_Game_Button = 0;
-	UPROPERTY(meta = (BindWidget)) UButton *Quit_Game_Button = 0;
+	UPROPERTY(meta = (BindWidget)) UDecibel_Button_Widget *New_Game_Button;
+	UPROPERTY(meta = (BindWidget)) UDecibel_Button_Widget *Load_Game_Button;
+	UPROPERTY(meta = (BindWidget)) UDecibel_Button_Widget *Quit_Game_Button;
 	UPROPERTY(meta = (BindWidget)) UComboBoxString *Languages_Combo_Box = 0;
-	UPROPERTY(meta = (BindWidget)) UTextBlock *New_Game_Text = 0;
-	UPROPERTY(meta = (BindWidget)) UTextBlock *Load_Game_Text = 0;
-	UPROPERTY(meta = (BindWidget)) UTextBlock *Quit_Game_Text = 0;
+
 
 private:
 	void Setup_Combo_Box();

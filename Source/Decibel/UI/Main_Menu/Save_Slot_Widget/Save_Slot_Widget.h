@@ -29,11 +29,16 @@ protected:
 
 	UPROPERTY(meta = (BindWidget)) UButton *Slot_Button = 0;
 	UPROPERTY(meta = (BindWidget)) UImage *Screenshot_Image = 0;
+	UPROPERTY(meta = (BindWidget)) UImage *BG_Image = 0;
 	UPROPERTY(meta = (BindWidget)) UTextBlock *Slot_Number_Text = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite) UTexture2D *Default_Image = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite) UTexture2D *Hovered_Image = 0;
 
 private:
 	void Setup_Text();
 	void Setup_Image();
 	UFUNCTION() void On_Clicked();
+	UFUNCTION() void Set_Hovered_Image();
+	UFUNCTION() void Set_Unhovered_Image();
 };
 //------------------------------------------------------------------------------------------------------------

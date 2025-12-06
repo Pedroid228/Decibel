@@ -4,7 +4,6 @@
 //------------------------------------------------------------------------------------------------------------
 ALever::ALever(): Min_Angle(0.0), Max_Angle(360.0), Curr_Angle(0.0)
 {
-	Curr_Angle = Min_Angle;
 }
 //------------------------------------------------------------------------------------------------------------
 void ALever::On_Save_Implementation(FActor_Save_Data &save_data)
@@ -19,6 +18,12 @@ void ALever::On_Load_Implementation(const FActor_Save_Data &save_data)
 	Super::On_Load_Implementation(save_data);
 
 	Curr_Angle = save_data.Lever_Angle;
+}
+//------------------------------------------------------------------------------------------------------------
+void ALever::BeginPlay()
+{
+	Super::BeginPlay();
+	Curr_Angle = Min_Angle;
 	Update_Rotation();
 }
 //------------------------------------------------------------------------------------------------------------
@@ -44,7 +49,7 @@ void ALever::Update_Rotation()
 {
 	FRotator new_rotation;
 
-	new_rotation = FRotator(Curr_Angle, 0.0, 0.0);
+	new_rotation = FRotator(0.0, 0.0, Curr_Angle);
 	Mesh->SetRelativeRotation(new_rotation);
 }
 //------------------------------------------------------------------------------------------------------------

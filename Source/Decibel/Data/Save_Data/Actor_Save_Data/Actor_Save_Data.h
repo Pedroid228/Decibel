@@ -14,6 +14,7 @@ USTRUCT(BlueprintType) struct FAstronaut_Save_Data
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite) bool Has_Sound_Detector;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite) bool Is_Sound_Detector_In_Arms;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite) FRotator Camera_Rotation;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite) TArray<EKeycard_Type> Keycards_Inventory;
 };
 //------------------------------------------------------------------------------------------------------------
@@ -55,6 +56,7 @@ USTRUCT(BlueprintType) struct FActor_Save_Data
 	FActor_Save_Data();
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite) bool Is_Keycard_Collected;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite) bool Is_Save_Box_Active;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite) double Hand_Door_Offset;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite) double Lever_Angle;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite) double Handwheel_Angle;

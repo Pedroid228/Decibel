@@ -8,6 +8,8 @@
 struct FDecibel_Save_Data;
 struct FActor_Save_Data;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOn_Game_Saved);
+
 // USave_Manager_Subsystem
 //------------------------------------------------------------------------------------------------------------
 UCLASS() class DECIBEL_API USave_Manager_Subsystem: public UGameInstanceSubsystem
@@ -22,6 +24,7 @@ public:
 	FString Get_Screenshot_Path(int32 slot_index);
 
 	static const int32 Save_Slots_Count = 4;
+	FOn_Game_Saved On_Game_Saved;
 
 private:
 	bool Try_Save_Actor(AActor *actor, FDecibel_Save_Data &decibel_save_data);
@@ -31,7 +34,6 @@ private:
 	FString Get_Save_Dir() const;
 	FString Get_Screenshots_Dir() const;
 	FString Get_Save_File_Path(int32 slot_index) const;
-	// TArray<FString> Get_All_Save_Files() const
 	void Create_Screenshot(int32 slot_index);
 
 	static FString Save_Dir;

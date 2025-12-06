@@ -10,9 +10,13 @@ AHand_Door::AHand_Door(): Min_Offset(0.0), Max_Offset(100.0), Max_Movement_Speed
 {
 	Curr_Offset = Min_Offset;
 
-	Interaction_Tip_Widget_Component->SetRelativeLocation(FVector(40.0, 15.0, 120.0));
-	Interaction_Tip_Widget_Component->SetRelativeRotation(FRotator(0.0, 90.0, 0.0));
-	Interaction_Tip_Widget_Component->SetRelativeScale3D(FVector {0.03});
+	check(Mesh != 0);
+	Mesh->SetRelativeScale3D(FVector{2.0});
+
+	check(Interaction_Tip_Widget_Component != 0);
+	Interaction_Tip_Widget_Component->SetRelativeLocation(FVector(10.0, 50.0, 60.0));
+	Interaction_Tip_Widget_Component->SetRelativeRotation(FRotator(0.0, 0.0, 0.0));
+	Interaction_Tip_Widget_Component->SetRelativeScale3D(FVector {0.02});
 }
 //------------------------------------------------------------------------------------------------------------
 void AHand_Door::On_Save_Implementation(FActor_Save_Data &save_data)
@@ -48,12 +52,12 @@ void AHand_Door::On_Trace_Hit_Implementation(AActor *interacting_actor, UPrimiti
 
 	if (Is_Player_In_Front())
 	{
-		rotation = FRotator(0.0, 90.0, 0.0);
+		rotation = FRotator(0.0, 0.0, 0.0);
 		socket_name = TEXT("Front_Grip_Socket");
 	}
 	else
 	{
-		rotation = FRotator(0.0, 270.0, 0.0);
+		rotation = FRotator(0.0, 180.0, 0.0);
 		socket_name = TEXT("Back_Grip_Socket");
 	}
 
@@ -62,7 +66,7 @@ void AHand_Door::On_Trace_Hit_Implementation(AActor *interacting_actor, UPrimiti
 
 	Interaction_Tip_Widget_Component->AttachToComponent(Mesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, socket_name);
 
-	relative_pos = FVector(-10.0, 0.0, 0.0);
+	relative_pos = FVector(0.0, -10.0, 0.0);
 	Interaction_Tip_Widget_Component->SetRelativeLocation(relative_pos);
 	Interaction_Tip_Widget_Component->SetRelativeRotation(rotation);
 }
@@ -84,9 +88,9 @@ void AHand_Door::Update_Offset(float delta_time)
 	double movement_speed;
 
 	if (Is_Player_In_Front())
-		movement_speed = -Mouse_Move_Vector.X * Sensivity;
-	else
 		movement_speed = Mouse_Move_Vector.X * Sensivity;
+	else
+		movement_speed = -Mouse_Move_Vector.X * Sensivity;
 
 	movement_speed = FMath::Clamp(movement_speed, -Max_Movement_Speed, Max_Movement_Speed);
 
@@ -106,7 +110,7 @@ void AHand_Door::Update_Pos()
 	FVector move_dir;
 	FVector new_pos;
 
-	move_dir = FVector(-1.0, 0.0, 0.0);
+	move_dir = FVector(0.0, -1.0, 0.0);
 	new_pos = move_dir * Curr_Offset;
 	Mesh->SetRelativeLocation(new_pos);
 }
@@ -135,7 +139,7 @@ bool AHand_Door::Is_Player_In_Front()
 
 	from_door_to_player = (player_pos - door_pos).GetSafeNormal();
 
-	dot_product = FVector::DotProduct(GetActorRightVector(), from_door_to_player);
+	dot_product = FVector::DotProduct(GetActorForwardVector(), from_door_to_player);
 
 	if (dot_product >= 0.0)
 		return true;

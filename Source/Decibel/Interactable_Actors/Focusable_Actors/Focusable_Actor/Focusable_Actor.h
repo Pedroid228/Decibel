@@ -5,6 +5,7 @@
 #include "Focusable_Actor.generated.h"
 
 class UAudioComponent;
+class USound_Emitter_Component;
 
 // AFocusable_Actor
 //------------------------------------------------------------------------------------------------------------
@@ -26,17 +27,24 @@ protected:
 	void Update_Sound_Playback(float delta_time);
 	void Start_Sound_Playing();
 	void Stop_Sound_Playing();
+	void Emit_Sound();
 
 	bool Is_Interacting;
 	bool Is_Moving;
 	bool Is_Sound_Playing;
+	bool Emit_Sound_At_Player;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Sound) ESound_Type Sound_Type;
 	double Sound_Playback_Pos;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) double Sensivity;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly) double Sound_Start_Threashhold;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly) UAudioComponent *Audio_Component = 0;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Sound) USoundBase *Moving_Sound = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Sound) double Sound_Start_Threashhold;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Sound) double Sound_Reemit_Time_Sec;
 	FVector2D Last_Mouse_Position;
 	FVector2D Mouse_Move_Vector;
+	FTimerHandle Emit_Sound_Timer_Handle;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly) UAudioComponent *Audio_Component = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Sound) USoundBase *Moving_Sound = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly) USound_Emitter_Component *Sound_Emitter_Component = 0;
 	APlayerController *Player_Controller = 0;
+	AActor *Interacting_Actor = 0;
 };
 //------------------------------------------------------------------------------------------------------------

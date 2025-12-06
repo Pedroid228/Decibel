@@ -13,3 +13,9 @@ void USound_Emitter_Component::Emit_Sound_At_Pos(const FSound_Stimulus &sound)
 	USounds_Manager_Subsystem::Emit_Sound_At_Pos(sound);
 }
 //------------------------------------------------------------------------------------------------------------
+void USound_Emitter_Component::Emit_Sound_At_Component_Pos(FSound_Stimulus &sound)
+{
+	sound.Pos = GetComponentLocation();
+	USounds_Manager_Subsystem::Emit_Sound_At_Pos(sound);
+}
+//------------------------------------------------------------------------------------------------------------

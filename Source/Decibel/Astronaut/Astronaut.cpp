@@ -7,16 +7,16 @@
 #include "Components/Sound_Emitter_Component/Sound_Emitter_Component.h"
 #include "Components/Trace_Interaction_Component/Trace_Interaction_Component.h"
 #include "Data/Sound_Stimulus/Sound_Stimulus.h"
+#include "Decibel_Game_Instance/Decibel_Game_Instance.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Interactable_Actors/Sound_Detector/Sound_Detector.h"
 #include "Interfaces/Trace_Interaction_Interface/Trace_Interaction_Interface.h"
+#include "Kismet/GameplayStatics.h"
 #include "Shakes/LegacyCameraShake.h"
 #include "Subsystems/Sounds_Manager_Subsystem/Sounds_Manager_Subsystem.h"
-#include "Decibel_Game_Instance/Decibel_Game_Instance.h"
-#include "Kismet/GameplayStatics.h"
 
 // AAstronaut
 //------------------------------------------------------------------------------------------------------------
@@ -28,7 +28,14 @@ AAstronaut::AAstronaut(): Walk_Speed(500.0), Run_Speed(700.0), Is_Input_Disabled
 
 	player_capsule = GetCapsuleComponent();
 	check(player_capsule != 0);
-	player_capsule->OnComponentHit.AddDynamic(this, &AAstronaut::On_Capsule_Hit);
+
+	Death_Capsule_Collision = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Death_Capsule_Comp"));
+	check(Death_Capsule_Collision != 0);
+	Death_Capsule_Collision->SetupAttachment(player_capsule);
+	Death_Capsule_Collision->SetCapsuleHalfHeight(player_capsule->GetScaledCapsuleHalfHeight());
+	Death_Capsule_Collision->SetCapsuleRadius(player_capsule->GetScaledCapsuleRadius() * 1.5f);
+	Death_Capsule_Collision->SetGenerateOverlapEvents(true);
+	Death_Capsule_Collision->OnComponentBeginOverlap.AddDynamic(this, &AAstronaut::On_Death_Capsule_Begin_Overlap);
 
 	Spring_Arm = CreateDefaultSubobject<USpringArmComponent>(TEXT("Spring_Arm_Comp"));
 	check(Spring_Arm != 0);
@@ -47,30 +54,43 @@ AAstronaut::AAstronaut(): Walk_Speed(500.0), Run_Speed(700.0), Is_Input_Disabled
 	check(Sound_Detector_Scene_Component != 0);
 	Sound_Detector_Scene_Component->SetupAttachment(Player_Camera);
 
+	Sound_Emitter_Component = CreateDefaultSubobject<USound_Emitter_Component>(TEXT("Sound_Emitter_Comp"));
+	check(Sound_Emitter_Component != 0);
+	Sound_Emitter_Component->SetupAttachment(player_capsule);
+
 	Trace_Interaction_Component = CreateDefaultSubobject<UTrace_Interaction_Component>(TEXT("Trace_Interaction_Comp"));
 	check(Trace_Interaction_Component != 0);
 
 	Footsteps_Sound_Component = CreateDefaultSubobject<UFootsteps_Sound_Component>(TEXT("Footsteps_Sound_Comp"));
 	check(Footsteps_Sound_Component != 0);
-
-	Sound_Emitter_Component = CreateDefaultSubobject<USound_Emitter_Component>(TEXT("Sound_Emitter_Comp"));
-	check(Sound_Emitter_Component != 0);
 }
 //------------------------------------------------------------------------------------------------------------
 void AAstronaut::On_Save_Implementation(FActor_Save_Data &save_data)
 {
+	APlayerController *player_controller = 0;
+
 	save_data.Actor_Class_Name = GetClass()->GetName();
 	save_data.Transform = GetActorTransform();
 	save_data.Astronaut_Save_Data.Keycards_Inventory = Keycards_Inventory;
 	save_data.Astronaut_Save_Data.Has_Sound_Detector = Has_Sound_Detector;
 	save_data.Astronaut_Save_Data.Is_Sound_Detector_In_Arms = Is_Sound_Detector_In_Arms;
+
+	player_controller = Get_Player_Controller();
+	check(player_controller != 0);
+	save_data.Astronaut_Save_Data.Camera_Rotation = player_controller->GetControlRotation();
 }
 //------------------------------------------------------------------------------------------------------------
 void AAstronaut::On_Load_Implementation(const FActor_Save_Data &save_data)
 {
+	APlayerController *player_controller = 0;
+
 	SetActorTransform(save_data.Transform);
 	Keycards_Inventory = save_data.Astronaut_Save_Data.Keycards_Inventory;
 	On_Load_Sound_Detector(save_data.Astronaut_Save_Data.Has_Sound_Detector, save_data.Astronaut_Save_Data.Is_Sound_Detector_In_Arms);
+
+	player_controller = Get_Player_Controller();
+	check(player_controller != 0);
+	player_controller->SetControlRotation(save_data.Astronaut_Save_Data.Camera_Rotation);
 }
 //------------------------------------------------------------------------------------------------------------
 void AAstronaut::Add_Keycard_By_Type(EKeycard_Type keycard_type)
@@ -118,6 +138,14 @@ void AAstronaut::Tick(float delta_time)
 	check(player_camera_manager != 0);
 	check(Curr_Camera_Shake != 0);
 	player_camera_manager->StartCameraShake(Curr_Camera_Shake);
+
+	if (Astronaut_State == EAstronaut_State::Walk || Astronaut_State == EAstronaut_State::Sprint)
+	{
+		if (Is_Not_Moving())
+		{
+			Set_State(EAstronaut_State::Idle);
+		}
+	}
 }
 //------------------------------------------------------------------------------------------------------------
 void AAstronaut::SetupPlayerInputComponent(UInputComponent *player_input_component)
@@ -160,8 +188,6 @@ void AAstronaut::SetupPlayerInputComponent(UInputComponent *player_input_compone
 //------------------------------------------------------------------------------------------------------------
 void AAstronaut::Set_State(EAstronaut_State new_state)
 {
-	FVector velocity;
-
 	if (new_state == Astronaut_State)
 		return;
 
@@ -173,6 +199,12 @@ void AAstronaut::Set_State(EAstronaut_State new_state)
 
 	case EAstronaut_State::Sprint:
 		Set_Character_Speed(Walk_Speed);
+	}
+
+	if (new_state == EAstronaut_State::Walk || new_state == EAstronaut_State::Sprint)
+	{
+		if (Is_Not_Moving())
+			return;
 	}
 
 	switch (new_state)
@@ -192,10 +224,6 @@ void AAstronaut::Set_State(EAstronaut_State new_state)
 		break;
 
 	case EAstronaut_State::Sprint:
-		velocity = GetVelocity();
-		if (velocity.IsNearlyZero())
-			return;
-
 		Set_Character_Speed(Run_Speed);
 		Curr_Camera_Shake = Run_Camera_Shake;
 		break;
@@ -387,7 +415,7 @@ void AAstronaut::Set_Character_Speed(double speed)
 void AAstronaut::On_Load_Sound_Detector(bool has_sound_detector, bool is_sound_detector_in_arms)
 {
 	UWorld *world = 0;
-	TArray<AActor*> sound_detectors;
+	TArray<AActor *> sound_detectors;
 
 	if (!has_sound_detector)
 		return;
@@ -406,7 +434,15 @@ void AAstronaut::On_Load_Sound_Detector(bool has_sound_detector, bool is_sound_d
 	On_Action_Put_Away_Sound_Detector();
 }
 //------------------------------------------------------------------------------------------------------------
-void AAstronaut::On_Capsule_Hit(UPrimitiveComponent *hit_component, AActor *other_actor, UPrimitiveComponent *other_comp, FVector normal_impulse, const FHitResult &hit)
+bool AAstronaut::Is_Not_Moving()
+{
+	FVector astronaut_velocity;
+
+	astronaut_velocity = GetVelocity();
+	return astronaut_velocity.IsNearlyZero();
+}
+//------------------------------------------------------------------------------------------------------------
+void AAstronaut::On_Death_Capsule_Begin_Overlap(UPrimitiveComponent *overlapped_component, AActor *other_actor, UPrimitiveComponent *other_comp, int32 other_body_index, bool from_sweep, const FHitResult &sweep_result)
 {
 	check(other_actor != 0);
 

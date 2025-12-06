@@ -12,6 +12,7 @@ class USkeletalMeshComponent;
 class UCameraComponent;
 class UInputAction;
 class USpringArmComponent;
+class UCapsuleComponent;
 class UTrace_Interaction_Component;
 class USound_Emitter_Component;
 class ULegacyCameraShake;
@@ -41,6 +42,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) USpringArmComponent *Spring_Arm = 0;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) UCameraComponent *Player_Camera = 0;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) USceneComponent *Sound_Detector_Scene_Component = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly) UCapsuleComponent *Death_Capsule_Collision = 0;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) UTrace_Interaction_Component *Trace_Interaction_Component = 0;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) UFootsteps_Sound_Component *Footsteps_Sound_Component = 0;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) USound_Emitter_Component *Sound_Emitter_Component = 0;
@@ -75,8 +77,9 @@ private:
 	void Try_Attach_Sound_Detector(AActor *actor);
 	void Set_Character_Speed(double speed);
 	void On_Load_Sound_Detector(bool has_sound_detector, bool is_sound_detector_in_arms);
+	bool Is_Not_Moving();
 
-	UFUNCTION() void On_Capsule_Hit(UPrimitiveComponent *hit_component, AActor *other_actor, UPrimitiveComponent *other_comp, FVector normal_impulse, const FHitResult &hit);
+	UFUNCTION() void On_Death_Capsule_Begin_Overlap(UPrimitiveComponent *overlapped_component, AActor *other_actor, UPrimitiveComponent *other_comp, int32 other_body_index, bool from_sweep, const FHitResult &sweep_result);
 	void Die();
 	APlayerController *Get_Player_Controller();
 

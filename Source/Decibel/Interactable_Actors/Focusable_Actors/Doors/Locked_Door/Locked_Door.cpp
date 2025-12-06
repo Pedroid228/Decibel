@@ -23,6 +23,7 @@ void ALocked_Door::Tick(float delta_time)
 	if (!Is_Unlocked && Curr_Offset != Min_Offset)
 	{
 		Is_Moving = true;
+		Emit_Sound_At_Player = false;
 		new_offset = FMath::FInterpConstantTo(Curr_Offset, Min_Offset, delta_time, Close_Speed);
 		Curr_Offset = new_offset;
 		Update_Sound_Playback(delta_time);

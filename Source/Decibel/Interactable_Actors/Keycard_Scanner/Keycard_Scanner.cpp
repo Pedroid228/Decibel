@@ -4,6 +4,7 @@
 #include "Components/PointLightComponent.h"
 #include "Components/WidgetComponent.h"
 #include "Interactable_Actors/Focusable_Actors/Doors/Locked_Door/Locked_Door.h"
+#include "UI/Keycard_Slot_Widget/Keycard_Slot_Widget.h"
 
 // AKeycard_Scanner
 //------------------------------------------------------------------------------------------------------------
@@ -20,6 +21,10 @@ AKeycard_Scanner::AKeycard_Scanner(): Keycard_Type(EKeycard_Type::None), Open_Ti
 	Green_Light = CreateDefaultSubobject<UPointLightComponent>(TEXT("Green_Light"));
 	check(Green_Light != 0);
 	Green_Light->SetupAttachment(Mesh);
+
+	Keycard_Slot_Widget_Component = CreateDefaultSubobject<UWidgetComponent>(TEXT("Keycard_Slot_Widget_Comp"));
+	check(Keycard_Slot_Widget_Component != 0);
+	Keycard_Slot_Widget_Component->SetupAttachment(Mesh);
 }
 //------------------------------------------------------------------------------------------------------------
 void AKeycard_Scanner::BeginPlay()
@@ -29,6 +34,7 @@ void AKeycard_Scanner::BeginPlay()
 	check(Keycard_Type != EKeycard_Type::None);
 
 	Update_Light(Is_Unlocked);
+	Setup_Keycard_Slot_Widget();
 }
 //------------------------------------------------------------------------------------------------------------
 void AKeycard_Scanner::On_Interact_Begin_Implementation(AActor *interacting_actor)
@@ -67,5 +73,29 @@ void AKeycard_Scanner::Update_Light(bool has_access)
 {
 	Green_Light->SetVisibility(has_access);
 	Red_Light->SetVisibility(!has_access);
+}
+//------------------------------------------------------------------------------------------------------------
+void AKeycard_Scanner::Setup_Keycard_Slot_Widget()
+{
+	UUserWidget *keycard_slot_user_widget = 0;
+	UKeycard_Slot_Widget *keycard_slot_widget = 0;
+
+	if (Base_Color_Material == 0 || Keycard_Type == EKeycard_Type::None)
+		return;
+
+	keycard_slot_user_widget = Keycard_Slot_Widget_Component->GetWidget();
+	check(keycard_slot_user_widget != 0);
+
+	keycard_slot_widget = Cast<UKeycard_Slot_Widget>(keycard_slot_user_widget);
+	check(keycard_slot_widget != 0);
+
+	MI_Color = UMaterialInstanceDynamic::Create(Base_Color_Material, this);
+	check(MI_Color != 0);
+
+	const FLinearColor *new_color = FKeycard_Color_Data::Colors.Find(Keycard_Type);
+	check(new_color != 0);
+	MI_Color->SetVectorParameterValue(TEXT("Color"), *new_color);
+
+	keycard_slot_widget->Set_Color(MI_Color);
 }
 //------------------------------------------------------------------------------------------------------------

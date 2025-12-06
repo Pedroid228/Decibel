@@ -9,7 +9,8 @@ UENUM(BlueprintType) enum class ESound_Type: uint8
 	None,
 	Walk,
 	Run,
-	Loud,
+	Wheel,
+	Door,
 	High_Priority
 };
 //------------------------------------------------------------------------------------------------------------

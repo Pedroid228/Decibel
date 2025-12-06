@@ -3,6 +3,7 @@
 #include "Components/SceneComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/WidgetComponent.h"
+#include "Subsystems/Localization_Manager_Subsystem/Localization_Manager_Subsystem.h"
 #include "UI/Interaction_Widget/Interaction_Widget.h"
 
 // AInteractable_Actor
@@ -35,9 +36,14 @@ void AInteractable_Actor::BeginPlay()
 {
 	UUserWidget *interaction_user_widget = 0;
 	UInteraction_Widget *interaction_widget = 0;
+	UGameInstance *game_inst = 0;
+	ULocalization_Manager_Subsystem *localization_manager = 0;
+	UTexture2D *texture = 0;
+
 	Super::BeginPlay();
 
-	check(Interaction_Tip_Texture != 0);
+	check(Interaction_Tip_Texture_RU != 0);
+	check(Interaction_Tip_Texture_EN != 0);
 	check(Interaction_Widget_BP_Class != 0);
 	check(Interaction_Tip_Widget_Component != 0);
 	Interaction_Tip_Widget_Component->SetWidgetClass(Interaction_Widget_BP_Class);
@@ -48,7 +54,18 @@ void AInteractable_Actor::BeginPlay()
 	interaction_widget = Cast<UInteraction_Widget>(interaction_user_widget);
 	check(interaction_widget != 0);
 
-	interaction_widget->Set_Texture(Interaction_Tip_Texture);
+	game_inst = GetGameInstance();
+	check(game_inst != 0);
+
+	localization_manager = game_inst->GetSubsystem<ULocalization_Manager_Subsystem>();
+	check(localization_manager != 0);
+
+	if (localization_manager->Get_Language() == ELanguage::Ru)
+		texture = Interaction_Tip_Texture_RU;
+	else
+		texture = Interaction_Tip_Texture_EN;
+
+	interaction_widget->Set_Texture(texture);
 
 	Interaction_Tip_Widget_Component->SetVisibility(false);
 }

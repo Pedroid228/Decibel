@@ -27,13 +27,16 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) ALocked_Door *Locked_Door = 0;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly) UPointLightComponent *Red_Light = 0;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly) UPointLightComponent *Green_Light = 0;
-
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Interaction_Tip) UWidgetComponent *Keycard_Slot_Widget_Component = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly) UMaterialInterface *Base_Color_Material = 0;
 
 private:
 	void Block_Door();
 	void Update_Light(bool has_access);
+	void Setup_Keycard_Slot_Widget();
 
 	bool Is_Unlocked;
 	FTimerHandle Door_Unlocked_Timer_Handle;
+	UMaterialInstanceDynamic *MI_Color = 0;
 };
 //------------------------------------------------------------------------------------------------------------

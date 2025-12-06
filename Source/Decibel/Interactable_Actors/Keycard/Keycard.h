@@ -19,12 +19,16 @@ public:
 	virtual void On_Load_Implementation(const FActor_Save_Data &save_data) override;
 
 protected:
+	virtual void OnConstruction(const FTransform &transform) override;
 	virtual void On_Interact_Begin_Implementation(AActor *interacting_actor);
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) EKeycard_Type Type;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly) UMaterialInterface *Base_Color_Material = 0;
 
 private:
 	void Hide();
 
 	bool Is_Collected;
+	UMaterialInstanceDynamic *MI_Color = 0;
 };
 //------------------------------------------------------------------------------------------------------------
