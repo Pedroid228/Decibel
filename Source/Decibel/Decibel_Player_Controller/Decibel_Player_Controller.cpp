@@ -12,36 +12,43 @@ void ADecibel_Player_Controller::SetupInputComponent()
 {
 	Super::SetupInputComponent();
 	InputComponent->BindAction("Toggle_Pause", IE_Pressed, this, &ADecibel_Player_Controller::Toggle_Pause).bExecuteWhenPaused = true;
-	InputComponent->BindAction("Load_Save", IE_Pressed, this, &ADecibel_Player_Controller::Load_Save);  // !!! Debug
-	InputComponent->BindAction("Save_Game", IE_Pressed, this, &ADecibel_Player_Controller::Save_Game);  // !!! Debug
+	//InputComponent->BindAction("Load_Save", IE_Pressed, this, &ADecibel_Player_Controller::Load_Save);  // !!! Debug
+	//InputComponent->BindAction("Save_Game", IE_Pressed, this, &ADecibel_Player_Controller::Save_Game);  // !!! Debug
 }
 //------------------------------------------------------------------------------------------------------------
-void ADecibel_Player_Controller::Load_Save()
+void ADecibel_Player_Controller::BeginPlay()
 {
-	UDecibel_Game_Instance *game_inst = 0;
+	FInputModeGameOnly game_mode_data;
 
-	game_inst = GetGameInstance<UDecibel_Game_Instance>();
-	check(game_inst != 0);
+	Super::BeginPlay();
 
-	game_inst->Load_Curr_Game();
+	bShowMouseCursor = false;
+	SetInputMode(game_mode_data);
 }
 //------------------------------------------------------------------------------------------------------------
-void ADecibel_Player_Controller::Save_Game()
-{
-	UDecibel_Game_Instance *game_inst = 0;
-
-	game_inst = GetGameInstance<UDecibel_Game_Instance>();
-	check(game_inst != 0);
-
-	game_inst->Save_Curr_Game();
-}
-//------------------------------------------------------------------------------------------------------------
+//void ADecibel_Player_Controller::Load_Save()
+//{
+//	UDecibel_Game_Instance *game_inst = 0;
+//
+//	game_inst = GetGameInstance<UDecibel_Game_Instance>();
+//	check(game_inst != 0);
+//
+//	game_inst->Load_Curr_Game();
+//}
+////------------------------------------------------------------------------------------------------------------
+//void ADecibel_Player_Controller::Save_Game()
+//{
+//	UDecibel_Game_Instance *game_inst = 0;
+//
+//	game_inst = GetGameInstance<UDecibel_Game_Instance>();
+//	check(game_inst != 0);
+//
+//	game_inst->Save_Curr_Game();
+//}
+////------------------------------------------------------------------------------------------------------------
 void ADecibel_Player_Controller::Toggle_Pause()
 {
-	bool is_paused;
-
-	is_paused = IsPaused();
-
+	bool is_paused = IsPaused();
 	bShowMouseCursor = !is_paused;
 	SetPause(!is_paused);
 }

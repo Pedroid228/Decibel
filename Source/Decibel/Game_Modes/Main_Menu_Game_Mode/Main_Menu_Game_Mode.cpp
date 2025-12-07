@@ -9,6 +9,7 @@ AMain_Menu_Game_Mode::AMain_Menu_Game_Mode()
 //------------------------------------------------------------------------------------------------------------
 void AMain_Menu_Game_Mode::BeginPlay()
 {
+	FInputModeUIOnly input_mode_data;
 	UWorld *world = 0;
 	APlayerController *player_controller = 0;
 
@@ -20,9 +21,12 @@ void AMain_Menu_Game_Mode::BeginPlay()
 	player_controller = world->GetFirstPlayerController();
 	check(player_controller != 0);
 
-	player_controller->bShowMouseCursor = true;
-
 	Create_And_Show_Main_Menu_Widget(player_controller);
+
+    input_mode_data.SetWidgetToFocus(Main_Menu_Widget->TakeWidget());
+    input_mode_data.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+	player_controller->bShowMouseCursor = true;
+    player_controller->SetInputMode(input_mode_data);
 }
 //------------------------------------------------------------------------------------------------------------
 void AMain_Menu_Game_Mode::Create_And_Show_Main_Menu_Widget(APlayerController *player_controller)

@@ -15,10 +15,11 @@ public:
 
 protected:
 	virtual void SetupInputComponent();
+	virtual void BeginPlay();
 
 private:
-	UFUNCTION() void Load_Save();  // !!! Debug
-	UFUNCTION() void Save_Game();  // !!! Debug
+	//UFUNCTION() void Load_Save();  // !!! Debug
+	//UFUNCTION() void Save_Game();  // !!! Debug
 	UFUNCTION() void Toggle_Pause();
 };
 //------------------------------------------------------------------------------------------------------------

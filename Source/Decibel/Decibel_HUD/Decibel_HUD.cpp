@@ -1,11 +1,11 @@
 #include "Decibel_HUD.h"
 
 #include "Game_Modes/Mars_Station_Game_Mode/Mars_Station_Game_Mode.h"
+#include "Subsystems/Localization_Manager_Subsystem/Localization_Manager_Subsystem.h"
 #include "Subsystems/Save_Manager_Subsystem/Save_Manager_Subsystem.h"
 #include "UI/Game_Saving_Widget/Game_Saving_Widget.h"
 #include "UI/Keycards_Widget/Keycards_Widget.h"
 #include "UI/Pause_Menu_Widget/Pause_Menu_Widget.h"
-#include "Subsystems/Localization_Manager_Subsystem/Localization_Manager_Subsystem.h"
 
 // ADecibel_HUD
 //------------------------------------------------------------------------------------------------------------
@@ -37,7 +37,7 @@ void ADecibel_HUD::Show_Credits()
 
 	world = GetWorld();
 	check(world != 0);
-	
+
 	if (localization_manager->Get_Language() == ELanguage::Ru)
 		Credits_Widget = CreateWidget<UUserWidget>(world, Credits_RU_Widget_BP_Class);
 	else
@@ -105,19 +105,37 @@ void ADecibel_HUD::BeginPlay()
 //------------------------------------------------------------------------------------------------------------
 void ADecibel_HUD::Show_Pause_Menu(bool is_visible)
 {
-	check(Pasue_Menu_Widget != 0)
+	UWorld *world = 0;
+	APlayerController *player_controller = 0;
+	FInputModeGameAndUI pause_mode_data;
+	FInputModeGameOnly game_mode_data;
 
-	    if (is_visible)
+	check(Pasue_Menu_Widget != 0);
+
+	world = GetWorld();
+	check(world);
+
+	player_controller = world->GetFirstPlayerController();
+	check(player_controller != 0);
+
+	if (is_visible)
 	{
 		Crosshair_Widget->SetVisibility(ESlateVisibility::Collapsed);
 		Keycards_Widget->SetVisibility(ESlateVisibility::Collapsed);
 		Pasue_Menu_Widget->SetVisibility(ESlateVisibility::Visible);
+
+		pause_mode_data.SetHideCursorDuringCapture(false);
+		pause_mode_data.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+		pause_mode_data.SetWidgetToFocus(Pasue_Menu_Widget->TakeWidget());
+		player_controller->SetInputMode(pause_mode_data);
 	}
 	else
 	{
 		Crosshair_Widget->SetVisibility(ESlateVisibility::Visible);
 		Keycards_Widget->SetVisibility(ESlateVisibility::Visible);
 		Pasue_Menu_Widget->SetVisibility(ESlateVisibility::Collapsed);
+
+		player_controller->SetInputMode(game_mode_data);
 	}
 }
 //------------------------------------------------------------------------------------------------------------
@@ -139,4 +157,3 @@ void ADecibel_HUD::Hide_Game_Saved()
 	Game_Saving_Widget->SetVisibility(ESlateVisibility::Collapsed);
 }
 //------------------------------------------------------------------------------------------------------------
-

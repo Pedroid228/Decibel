@@ -27,12 +27,12 @@ void UDecibel_Game_Instance::Init()
 //------------------------------------------------------------------------------------------------------------
 void UDecibel_Game_Instance::Main_Menu()
 {
-	Open_Level(TEXT("Menu_Map"));
+	Open_Level(TEXT("MenuMap"));
 }
 //------------------------------------------------------------------------------------------------------------
 void UDecibel_Game_Instance::New_Game(int32 slot_index)
 {
-	Open_Level(TEXT("Test_Map"));
+	Open_Level(TEXT("Game_Map"));
 
 	FCoreUObjectDelegates::PostLoadMapWithWorld.AddWeakLambda(this, [this, slot_index](UWorld *world) {
 		check(Save_Manager != 0);
