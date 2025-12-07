@@ -74,7 +74,7 @@ private:
 	void On_Action_Put_Away_Sound_Detector();
 
 	bool Start_Interact_By_Type(EInteraction_Type by_interaction_type);
-	void Try_Attach_Sound_Detector(AActor *actor);
+	void Try_Attach_Sound_Detector(AActor *actor, bool has_sound_detector);
 	void Set_Character_Speed(double speed);
 	void On_Load_Sound_Detector(bool has_sound_detector, bool is_sound_detector_in_arms);
 	bool Is_Not_Moving();

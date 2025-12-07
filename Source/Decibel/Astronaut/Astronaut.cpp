@@ -391,7 +391,7 @@ bool AAstronaut::Start_Interact_By_Type(EInteraction_Type by_interaction_type)
 		ITrace_Interaction_Interface::Execute_On_Interact_Begin(interactable_actor, this);
 
 		if (interaction_type == EInteraction_Type::Instant)
-			Try_Attach_Sound_Detector(interactable_actor);
+			Try_Attach_Sound_Detector(interactable_actor, false);
 		else if (interaction_type == EInteraction_Type::Hold_And_Drag)
 			Interacting_Actor = interactable_actor;
 
@@ -401,7 +401,7 @@ bool AAstronaut::Start_Interact_By_Type(EInteraction_Type by_interaction_type)
 	return false;
 }
 //------------------------------------------------------------------------------------------------------------
-void AAstronaut::Try_Attach_Sound_Detector(AActor *actor)
+void AAstronaut::Try_Attach_Sound_Detector(AActor *actor, bool has_sound_detector)
 {
 	UDecibel_Game_Instance *decibel_game_inst = 0;
 
@@ -419,7 +419,8 @@ void AAstronaut::Try_Attach_Sound_Detector(AActor *actor)
 		decibel_game_inst = GetGameInstance<UDecibel_Game_Instance>();
 		check(decibel_game_inst != 0);
 
-		decibel_game_inst->Save_Curr_Game();
+		if (!has_sound_detector)
+			decibel_game_inst->Save_Curr_Game();
 	}
 }
 //------------------------------------------------------------------------------------------------------------
@@ -448,7 +449,7 @@ void AAstronaut::On_Load_Sound_Detector(bool has_sound_detector, bool is_sound_d
 	check(sound_detectors.Num() > 0);
 
 	check(sound_detectors[0] != 0);
-	Try_Attach_Sound_Detector(sound_detectors[0]);
+	Try_Attach_Sound_Detector(sound_detectors[0], has_sound_detector);
 	check(Sound_Detector != 0);
 
 	Is_Sound_Detector_In_Arms = !is_sound_detector_in_arms;

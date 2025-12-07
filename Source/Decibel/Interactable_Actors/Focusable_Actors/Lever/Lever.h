@@ -23,6 +23,7 @@ protected:
 	virtual void Tick(float delta_time);
 	void Update_Angle();
 	void Update_Rotation();
+	void Update_Percent();
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) double Min_Angle;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) double Max_Angle;

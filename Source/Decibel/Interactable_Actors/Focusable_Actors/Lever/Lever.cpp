@@ -22,6 +22,8 @@ void ALever::On_Load_Implementation(const FActor_Save_Data &save_data)
 	Super::On_Load_Implementation(save_data);
 
 	Curr_Angle = save_data.Lever_Angle;
+	Update_Percent();
+	Update_Rotation();
 }
 //------------------------------------------------------------------------------------------------------------
 void ALever::BeginPlay()
@@ -48,14 +50,29 @@ void ALever::Tick(float delta_time)
 //------------------------------------------------------------------------------------------------------------
 void ALever::Update_Angle()
 {
-	bool new_active;
-	double complete_percent;
 	double vertical_movement;
-	AKeycard_Scanner *curr_keycard_scanner = 0;
-	TArray<AActor *> keycard_scanners;
 
 	vertical_movement = Mouse_Move_Vector.Y * Sensivity;
 	Curr_Angle = FMath::Clamp(Curr_Angle + vertical_movement, Min_Angle, Max_Angle);
+
+	Update_Percent();
+	Update_Rotation();
+}
+//------------------------------------------------------------------------------------------------------------
+void ALever::Update_Rotation()
+{
+	FRotator new_rotation;
+
+	new_rotation = FRotator(0.0, 0.0, Curr_Angle);
+	Mesh->SetRelativeRotation(new_rotation);
+}
+//------------------------------------------------------------------------------------------------------------
+void ALever::Update_Percent()
+{
+	bool new_active;
+	double complete_percent;
+	AKeycard_Scanner *curr_keycard_scanner = 0;
+	TArray<AActor *> keycard_scanners;
 
 	complete_percent = (Curr_Angle - Min_Angle) / (Max_Angle - Min_Angle);
 
@@ -88,15 +105,5 @@ void ALever::Update_Angle()
 		}
 	}
 	Is_Active = new_active;
-
-	Update_Rotation();
-}
-//------------------------------------------------------------------------------------------------------------
-void ALever::Update_Rotation()
-{
-	FRotator new_rotation;
-
-	new_rotation = FRotator(0.0, 0.0, Curr_Angle);
-	Mesh->SetRelativeRotation(new_rotation);
 }
 //------------------------------------------------------------------------------------------------------------
