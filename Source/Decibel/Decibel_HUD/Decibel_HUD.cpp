@@ -3,11 +3,18 @@
 #include "Game_Modes/Mars_Station_Game_Mode/Mars_Station_Game_Mode.h"
 #include "UI/Game_Saving_Widget/Game_Saving_Widget.h"
 #include "Subsystems/Save_Manager_Subsystem/Save_Manager_Subsystem.h"
+#include "UI/Keycards_Widget/Keycards_Widget.h"
 
 // ADecibel_HUD
 //------------------------------------------------------------------------------------------------------------
 ADecibel_HUD::ADecibel_HUD(): Game_Saved_Showing_Time(1.5f)
 {
+}
+//------------------------------------------------------------------------------------------------------------
+void ADecibel_HUD::Add_Keycard(EKeycard_Type keycard_type)
+{
+	check(Keycards_Widget != 0);
+	Keycards_Widget->Add_Keycard(keycard_type);
 }
 //------------------------------------------------------------------------------------------------------------
 void ADecibel_HUD::BeginPlay()
@@ -25,6 +32,7 @@ void ADecibel_HUD::BeginPlay()
 	check(Pause_Menu_Widget_BP_Class != 0);
 	check(Game_Saving_Widget_BP_Class != 0);
 	check(Crosshair_Widget_BP_Class != 0);
+	check(Keycards_Widget_BP_Class != 0);
 
 	game_mode = world->GetAuthGameMode();
 	check(game_mode != 0);
@@ -54,7 +62,12 @@ void ADecibel_HUD::BeginPlay()
 	Crosshair_Widget = CreateWidget<UUserWidget>(world, Crosshair_Widget_BP_Class);
 	check(Crosshair_Widget != 0);
 	Crosshair_Widget->AddToViewport();
-	Game_Saving_Widget->SetVisibility(ESlateVisibility::Visible);
+	Crosshair_Widget->SetVisibility(ESlateVisibility::Visible);
+
+	Keycards_Widget = CreateWidget<UKeycards_Widget>(world, Keycards_Widget_BP_Class);
+	check(Keycards_Widget != 0);
+	Keycards_Widget->AddToViewport();
+	Keycards_Widget->SetVisibility(ESlateVisibility::Visible);
 }
 //------------------------------------------------------------------------------------------------------------
 void ADecibel_HUD::Show_Pause_Menu(bool is_visible)
@@ -64,14 +77,15 @@ void ADecibel_HUD::Show_Pause_Menu(bool is_visible)
 	if (is_visible)
 	{
 		Crosshair_Widget->SetVisibility(ESlateVisibility::Collapsed);
+		Keycards_Widget->SetVisibility(ESlateVisibility::Collapsed);
 		Pasue_Menu_Widget->SetVisibility(ESlateVisibility::Visible);
 	}
 	else
 	{
 		Crosshair_Widget->SetVisibility(ESlateVisibility::Visible);
+		Keycards_Widget->SetVisibility(ESlateVisibility::Visible);
 		Pasue_Menu_Widget->SetVisibility(ESlateVisibility::Collapsed);
 	}
-		
 }
 //------------------------------------------------------------------------------------------------------------
 void ADecibel_HUD::Show_Game_Saved()

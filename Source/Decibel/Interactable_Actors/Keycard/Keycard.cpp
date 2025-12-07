@@ -1,6 +1,7 @@
 #include "Keycard.h"
 #include "Astronaut/Astronaut.h"
 #include "Components/AudioComponent.h"
+#include "Decibel_Game_Instance/Decibel_Game_Instance.h"
 
 // AKeycard
 //------------------------------------------------------------------------------------------------------------
@@ -42,11 +43,17 @@ void AKeycard::On_Interact_Begin_Implementation(AActor *interacting_actor)
 {
 	AAstronaut *astronaut = 0;
 	UWorld *world = 0;
+	UDecibel_Game_Instance *decibel_game_inst = 0;
 
 	astronaut = Cast<AAstronaut>(interacting_actor);
 	check(astronaut != 0);
 	astronaut->Add_Keycard_By_Type(Type);
 	Hide();
+
+	decibel_game_inst = GetGameInstance<UDecibel_Game_Instance>();
+		check(decibel_game_inst != 0);
+
+	decibel_game_inst->Save_Curr_Game();
 
 	if (Interaction_Sound != 0)
 		Audio_Component->Play();
