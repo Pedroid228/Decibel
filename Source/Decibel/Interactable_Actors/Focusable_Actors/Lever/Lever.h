@@ -5,6 +5,7 @@
 #include "Lever.generated.h"
 
 class AKeycard_Scanner;
+class APointLight;
 
 // ALever
 //------------------------------------------------------------------------------------------------------------
@@ -25,6 +26,8 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) double Min_Angle;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) double Max_Angle;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Sound) USoundBase *Generator_Sound = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly) APointLight *Point_Light = 0;
 
 private:
 	bool Is_Active;

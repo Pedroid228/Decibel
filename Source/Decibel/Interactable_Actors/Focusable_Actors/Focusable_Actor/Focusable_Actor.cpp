@@ -80,7 +80,10 @@ void AFocusable_Actor::On_Interact_End_Implementation()
 	Player_Controller = 0;
 
 	Interaction_Tip_Widget_Component->SetVisibility(true);
-	Stop_Sound_Playing();
+
+	if (Is_Sound_Playing)
+		Stop_Sound_Playing();
+
 	SetActorTickEnabled(false);
 }
 //------------------------------------------------------------------------------------------------------------

@@ -15,7 +15,7 @@ UCLASS() class DECIBEL_API UDecibel_Game_Instance: public UGameInstance
 public:
 	UDecibel_Game_Instance();
 	virtual void Init() override;
-	void Main_Menu();
+	UFUNCTION(BlueprintCallable) void Main_Menu();
 	void New_Game(int32 slot_index);
 	void Load_Game(int32 slot_index);
 	UFUNCTION(BlueprintCallable) void Save_Curr_Game();

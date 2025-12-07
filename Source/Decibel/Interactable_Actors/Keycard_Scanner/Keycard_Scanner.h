@@ -26,7 +26,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) bool Is_Active;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) EKeycard_Type Keycard_Type;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) double Open_Time_Sec;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly) ALocked_Door *Locked_Door = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly) TArray<ALocked_Door*> Locked_Doors;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly) UPointLightComponent *Red_Light = 0;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly) UPointLightComponent *Green_Light = 0;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Interaction_Tip) UWidgetComponent *Keycard_Slot_Widget_Component = 0;
