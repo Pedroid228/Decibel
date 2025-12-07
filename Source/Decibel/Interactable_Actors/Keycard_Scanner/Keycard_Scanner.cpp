@@ -1,11 +1,11 @@
 #include "Keycard_Scanner.h"
 
 #include "Astronaut/Astronaut.h"
+#include "Components/AudioComponent.h"
 #include "Components/PointLightComponent.h"
 #include "Components/WidgetComponent.h"
 #include "Interactable_Actors/Focusable_Actors/Doors/Locked_Door/Locked_Door.h"
 #include "UI/Keycard_Slot_Widget/Keycard_Slot_Widget.h"
-#include "Components/AudioComponent.h"
 
 // AKeycard_Scanner
 //------------------------------------------------------------------------------------------------------------
@@ -54,7 +54,7 @@ void AKeycard_Scanner::Activate(bool is_active, bool force)
 void AKeycard_Scanner::BeginPlay()
 {
 	Super::BeginPlay();
-	check(Locked_Door != 0);
+	check(!Locked_Doors.IsEmpty());
 	check(Keycard_Type != EKeycard_Type::None);
 
 	Activate(Is_Active, true);
@@ -70,8 +70,10 @@ void AKeycard_Scanner::On_Interact_Begin_Implementation(AActor *interacting_acto
 //------------------------------------------------------------------------------------------------------------
 void AKeycard_Scanner::Block_Door()
 {
+	for (ALocked_Door *locked_door : Locked_Doors)
+		locked_door->Set_Lock(false);
+
 	Is_Unlocked = false;
-	Locked_Door->Set_Lock(false);
 	Update_Light(false);
 }
 //------------------------------------------------------------------------------------------------------------
@@ -116,7 +118,7 @@ void AKeycard_Scanner::Setup_Keycard_Slot_Widget()
 	{
 		MI_Color->SetVectorParameterValue(TEXT("Color"), FLinearColor::Black);
 	}
-	
+
 	keycard_slot_widget->Set_Color(MI_Color);
 }
 //------------------------------------------------------------------------------------------------------------
@@ -132,7 +134,9 @@ void AKeycard_Scanner::Active_Interaction(AActor *interacting_actor)
 
 	if (has_keycard)
 	{
-		check(Locked_Door != 0) Locked_Door->Set_Lock(true);
+		for (ALocked_Door *locked_door : Locked_Doors)
+			locked_door->Set_Lock(true);
+
 		Update_Light(true);
 
 		world = GetWorld();
@@ -149,12 +153,11 @@ void AKeycard_Scanner::Active_Interaction(AActor *interacting_actor)
 			Audio_Component->Play();
 		}
 	}
-	else
-		if (Interaction_Sound_Unsuccess != 0)
-		{
-			Audio_Component->SetSound(Interaction_Sound_Unsuccess);
-			Audio_Component->Play();
-		}
+	else if (Interaction_Sound_Unsuccess != 0)
+	{
+		Audio_Component->SetSound(Interaction_Sound_Unsuccess);
+		Audio_Component->Play();
+	}
 }
 //------------------------------------------------------------------------------------------------------------
 
