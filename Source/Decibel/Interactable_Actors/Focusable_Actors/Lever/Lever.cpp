@@ -2,6 +2,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Interactable_Actors/Keycard_Scanner/Keycard_Scanner.h"
 #include "Components/AudioComponent.h"
+#include "Engine/PointLight.h"
 
 // ALever
 //------------------------------------------------------------------------------------------------------------
@@ -29,6 +30,9 @@ void ALever::BeginPlay()
 
 	Curr_Angle = Min_Angle;
 	Update_Rotation();
+
+	check(Point_Light != 0);
+	Point_Light->SetActorHiddenInGame(true);
 
 	if (Generator_Sound != 0)
 		Audio_Component->SetSound(Generator_Sound);
@@ -63,9 +67,15 @@ void ALever::Update_Angle()
 	if (Is_Active != new_active)
 	{
 		if (new_active)
+		{
 			Audio_Component->Play();
+			Point_Light->SetActorHiddenInGame(false);
+		}
 		else
+		{
 			Audio_Component->Stop();
+			Point_Light->SetActorHiddenInGame(true);
+		}	
 
 		UGameplayStatics::GetAllActorsWithTag(GetWorld(), TEXT("Keycard_Scanner_Tag"), keycard_scanners);
 
