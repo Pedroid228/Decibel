@@ -17,11 +17,13 @@ UCLASS() class DECIBEL_API AKeycard_Scanner: public AInteractable_Actor
 
 public:
 	AKeycard_Scanner();
+	void Activate(bool is_activate, bool force = false);
 
 protected:
 	virtual void BeginPlay();
 	virtual void On_Interact_Begin_Implementation(AActor *interacting_actor);
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly) bool Is_Active;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) EKeycard_Type Keycard_Type;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) double Open_Time_Sec;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) ALocked_Door *Locked_Door = 0;
@@ -31,12 +33,14 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) UMaterialInterface *Base_Color_Material = 0;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Sound) USoundBase *Interaction_Sound_Success = 0;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Sound) USoundBase *Interaction_Sound_Unsuccess = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Interaction_Tip) UTexture2D *Inactive_Interaction_Texture = 0;
 
 
 private:
 	void Block_Door();
 	void Update_Light(bool has_access);
 	void Setup_Keycard_Slot_Widget();
+	void Active_Interaction(AActor *interacting_actor);
 
 	bool Is_Unlocked;
 	FTimerHandle Door_Unlocked_Timer_Handle;

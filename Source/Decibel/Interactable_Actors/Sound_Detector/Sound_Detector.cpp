@@ -4,6 +4,7 @@
 #include "Components/WidgetComponent.h"
 #include "UI/Dashboard_Gauge_Widget/Dashboard_Gauge_Widget.h"
 #include "Kismet/GameplayStatics.h"
+#include "Decibel_Game_Instance/Decibel_Game_Instance.h"
 
 // ASound_Detector
 //------------------------------------------------------------------------------------------------------------
@@ -68,7 +69,6 @@ void ASound_Detector::Tick(float delta_time)
 {
 	double ratio;
 	double distance_to_hush;
-
 
 	Super::Tick(delta_time);
 

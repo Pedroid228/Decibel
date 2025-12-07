@@ -9,9 +9,10 @@
 
 // AKeycard_Scanner
 //------------------------------------------------------------------------------------------------------------
-AKeycard_Scanner::AKeycard_Scanner(): Keycard_Type(EKeycard_Type::None), Open_Time_Sec(6.0), Is_Unlocked(false)
+AKeycard_Scanner::AKeycard_Scanner(): Is_Active(true), Keycard_Type(EKeycard_Type::None), Open_Time_Sec(6.0), Is_Unlocked(false)
 {
 	Interaction_Type = EInteraction_Type::Instant;
+	Tags.Add(TEXT("Keycard_Scanner_Tag"));
 
 	check(Mesh != 0);
 
@@ -28,17 +29,98 @@ AKeycard_Scanner::AKeycard_Scanner(): Keycard_Type(EKeycard_Type::None), Open_Ti
 	Keycard_Slot_Widget_Component->SetupAttachment(Mesh);
 }
 //------------------------------------------------------------------------------------------------------------
+void AKeycard_Scanner::Activate(bool is_active, bool force)
+{
+	if (!force && Is_Active == is_active)
+		return;
+
+	Is_Active = is_active;
+
+	if (is_active)
+	{
+		Setup_Language_Interaction_Widget_Texture();
+	}
+	else
+	{
+		Block_Door();
+		check(Inactive_Interaction_Texture != 0);
+		Set_Interaction_Widget_Texture(Inactive_Interaction_Texture);
+	}
+
+	Update_Light(Is_Unlocked);
+	Setup_Keycard_Slot_Widget();
+}
+//------------------------------------------------------------------------------------------------------------
 void AKeycard_Scanner::BeginPlay()
 {
 	Super::BeginPlay();
 	check(Locked_Door != 0);
 	check(Keycard_Type != EKeycard_Type::None);
 
+	Activate(Is_Active, true);
 	Update_Light(Is_Unlocked);
 	Setup_Keycard_Slot_Widget();
 }
 //------------------------------------------------------------------------------------------------------------
 void AKeycard_Scanner::On_Interact_Begin_Implementation(AActor *interacting_actor)
+{
+	if (Is_Active)
+		Active_Interaction(interacting_actor);
+}
+//------------------------------------------------------------------------------------------------------------
+void AKeycard_Scanner::Block_Door()
+{
+	Is_Unlocked = false;
+	Locked_Door->Set_Lock(false);
+	Update_Light(false);
+}
+//------------------------------------------------------------------------------------------------------------
+void AKeycard_Scanner::Update_Light(bool has_access)
+{
+	if (Is_Active)
+	{
+		Green_Light->SetVisibility(has_access);
+		Red_Light->SetVisibility(!has_access);
+	}
+	else
+	{
+		Green_Light->SetVisibility(false);
+		Red_Light->SetVisibility(false);
+	}
+}
+//------------------------------------------------------------------------------------------------------------
+void AKeycard_Scanner::Setup_Keycard_Slot_Widget()
+{
+	UUserWidget *keycard_slot_user_widget = 0;
+	UKeycard_Slot_Widget *keycard_slot_widget = 0;
+
+	if (Base_Color_Material == 0 || Keycard_Type == EKeycard_Type::None)
+		return;
+
+	keycard_slot_user_widget = Keycard_Slot_Widget_Component->GetWidget();
+	check(keycard_slot_user_widget != 0);
+
+	keycard_slot_widget = Cast<UKeycard_Slot_Widget>(keycard_slot_user_widget);
+	check(keycard_slot_widget != 0);
+
+	MI_Color = UMaterialInstanceDynamic::Create(Base_Color_Material, this);
+	check(MI_Color != 0);
+
+	if (Is_Active)
+	{
+		const FLinearColor *new_color = FKeycard_Color_Data::Colors.Find(Keycard_Type);
+		check(new_color != 0);
+		MI_Color->SetVectorParameterValue(TEXT("Color"), *new_color);
+	}
+	else
+	{
+		MI_Color->SetVectorParameterValue(TEXT("Color"), FLinearColor::Black);
+	}
+	
+	keycard_slot_widget->Set_Color(MI_Color);
+}
+//------------------------------------------------------------------------------------------------------------
+void AKeycard_Scanner::Active_Interaction(AActor *interacting_actor)
 {
 	bool has_keycard;
 	AAstronaut *astronaut = 0;
@@ -75,40 +157,4 @@ void AKeycard_Scanner::On_Interact_Begin_Implementation(AActor *interacting_acto
 		}
 }
 //------------------------------------------------------------------------------------------------------------
-void AKeycard_Scanner::Block_Door()
-{
-	Is_Unlocked = false;
-	Locked_Door->Set_Lock(false);
-	Update_Light(false);
-}
-//------------------------------------------------------------------------------------------------------------
-void AKeycard_Scanner::Update_Light(bool has_access)
-{
-	Green_Light->SetVisibility(has_access);
-	Red_Light->SetVisibility(!has_access);
-}
-//------------------------------------------------------------------------------------------------------------
-void AKeycard_Scanner::Setup_Keycard_Slot_Widget()
-{
-	UUserWidget *keycard_slot_user_widget = 0;
-	UKeycard_Slot_Widget *keycard_slot_widget = 0;
 
-	if (Base_Color_Material == 0 || Keycard_Type == EKeycard_Type::None)
-		return;
-
-	keycard_slot_user_widget = Keycard_Slot_Widget_Component->GetWidget();
-	check(keycard_slot_user_widget != 0);
-
-	keycard_slot_widget = Cast<UKeycard_Slot_Widget>(keycard_slot_user_widget);
-	check(keycard_slot_widget != 0);
-
-	MI_Color = UMaterialInstanceDynamic::Create(Base_Color_Material, this);
-	check(MI_Color != 0);
-
-	const FLinearColor *new_color = FKeycard_Color_Data::Colors.Find(Keycard_Type);
-	check(new_color != 0);
-	MI_Color->SetVectorParameterValue(TEXT("Color"), *new_color);
-
-	keycard_slot_widget->Set_Color(MI_Color);
-}
-//------------------------------------------------------------------------------------------------------------

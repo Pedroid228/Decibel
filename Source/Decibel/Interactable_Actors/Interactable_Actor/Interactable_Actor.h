@@ -23,6 +23,8 @@ protected:
 	virtual void BeginPlay();
 	virtual void On_Trace_Hit_Implementation(AActor *interacting_actor, UPrimitiveComponent *hit_component);
 	virtual void On_Trace_Leave_Implementation();
+	void Setup_Language_Interaction_Widget_Texture();
+	void Set_Interaction_Widget_Texture(UTexture2D *texture);
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly) USceneComponent *Root_Scene = 0;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Interaction_Tip) UWidgetComponent *Interaction_Tip_Widget_Component = 0;

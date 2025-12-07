@@ -17,6 +17,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Shakes/LegacyCameraShake.h"
 #include "Subsystems/Sounds_Manager_Subsystem/Sounds_Manager_Subsystem.h"
+#include "Decibel_HUD/Decibel_HUD.h"
 
 // AAstronaut
 //------------------------------------------------------------------------------------------------------------
@@ -85,17 +86,30 @@ void AAstronaut::On_Load_Implementation(const FActor_Save_Data &save_data)
 	APlayerController *player_controller = 0;
 
 	SetActorTransform(save_data.Transform);
-	Keycards_Inventory = save_data.Astronaut_Save_Data.Keycards_Inventory;
 	On_Load_Sound_Detector(save_data.Astronaut_Save_Data.Has_Sound_Detector, save_data.Astronaut_Save_Data.Is_Sound_Detector_In_Arms);
 
 	player_controller = Get_Player_Controller();
 	check(player_controller != 0);
 	player_controller->SetControlRotation(save_data.Astronaut_Save_Data.Camera_Rotation);
+
+	for (EKeycard_Type keycard : save_data.Astronaut_Save_Data.Keycards_Inventory)
+		Add_Keycard_By_Type(keycard);
 }
 //------------------------------------------------------------------------------------------------------------
 void AAstronaut::Add_Keycard_By_Type(EKeycard_Type keycard_type)
 {
+	APlayerController *player_controller = 0;
+	ADecibel_HUD *decibel_hud;
+
 	Keycards_Inventory.Add(keycard_type);
+
+	player_controller = Get_Player_Controller();
+	check(player_controller != 0);
+
+	decibel_hud = player_controller->GetHUD<ADecibel_HUD>();
+	check(decibel_hud != 0);
+
+	decibel_hud->Add_Keycard(keycard_type);
 }
 //------------------------------------------------------------------------------------------------------------
 bool AAstronaut::Has_Keycard_Of_Type(EKeycard_Type keycard_type)
@@ -389,6 +403,8 @@ bool AAstronaut::Start_Interact_By_Type(EInteraction_Type by_interaction_type)
 //------------------------------------------------------------------------------------------------------------
 void AAstronaut::Try_Attach_Sound_Detector(AActor *actor)
 {
+	UDecibel_Game_Instance *decibel_game_inst = 0;
+
 	if (Sound_Detector != 0)
 		return;
 
@@ -399,6 +415,11 @@ void AAstronaut::Try_Attach_Sound_Detector(AActor *actor)
 		Sound_Detector->SetActorEnableCollision(false);
 		Is_Sound_Detector_In_Arms = true;
 		Has_Sound_Detector = true;
+
+		decibel_game_inst = GetGameInstance<UDecibel_Game_Instance>();
+		check(decibel_game_inst != 0);
+
+		decibel_game_inst->Save_Curr_Game();
 	}
 }
 //------------------------------------------------------------------------------------------------------------

@@ -4,6 +4,8 @@
 
 #include "Lever.generated.h"
 
+class AKeycard_Scanner;
+
 // ALever
 //------------------------------------------------------------------------------------------------------------
 UCLASS() class DECIBEL_API ALever: public AFocusable_Actor
@@ -25,6 +27,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) double Max_Angle;
 
 private:
+	bool Is_Active;
 	double Curr_Angle;
 };
 //------------------------------------------------------------------------------------------------------------

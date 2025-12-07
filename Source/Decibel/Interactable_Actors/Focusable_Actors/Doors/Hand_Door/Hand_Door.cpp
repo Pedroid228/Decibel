@@ -14,7 +14,7 @@ AHand_Door::AHand_Door(): Min_Offset(0.0), Max_Offset(100.0), Max_Movement_Speed
 	Mesh->SetRelativeScale3D(FVector{2.0});
 
 	check(Interaction_Tip_Widget_Component != 0);
-	Interaction_Tip_Widget_Component->SetRelativeLocation(FVector(10.0, 50.0, 60.0));
+	Interaction_Tip_Widget_Component->SetRelativeLocation(FVector(8.0, 61.0, 63.0));
 	Interaction_Tip_Widget_Component->SetRelativeRotation(FRotator(0.0, 0.0, 0.0));
 	Interaction_Tip_Widget_Component->SetRelativeScale3D(FVector {0.02});
 }
@@ -66,7 +66,7 @@ void AHand_Door::On_Trace_Hit_Implementation(AActor *interacting_actor, UPrimiti
 
 	Interaction_Tip_Widget_Component->AttachToComponent(Mesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, socket_name);
 
-	relative_pos = FVector(0.0, -10.0, 0.0);
+	relative_pos = FVector(0.0, 0.0, 10.0);
 	Interaction_Tip_Widget_Component->SetRelativeLocation(relative_pos);
 	Interaction_Tip_Widget_Component->SetRelativeRotation(rotation);
 }
