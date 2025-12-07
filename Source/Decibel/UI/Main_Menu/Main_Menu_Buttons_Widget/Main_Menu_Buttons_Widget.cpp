@@ -6,6 +6,7 @@
 #include "Decibel_Game_Instance/Decibel_Game_Instance.h"
 #include "Subsystems/Localization_Manager_Subsystem/Localization_Manager_Subsystem.h"
 #include "UI/Main_Menu/Saves_List_Widget/Saves_List_Widget.h"
+#include "Components/TextBlock.h"
 
 // UMain_Menu_Buttons_Widget
 //------------------------------------------------------------------------------------------------------------
@@ -74,6 +75,9 @@ void UMain_Menu_Buttons_Widget::Update_Text(ELanguage new_language)
 
 	check(Quit_Game_Button != 0);
 	Quit_Game_Button->Set_Text_By_Key(TEXT("Quit_Game"));
+
+	check(Greetings_Text != 0);
+	Greetings_Text->SetText(Localization_Manager->Get_Variative_Value(TEXT("Menu_Greetings")));
 }
 //------------------------------------------------------------------------------------------------------------
 void UMain_Menu_Buttons_Widget::On_New_Game_Clicked()

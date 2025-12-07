@@ -93,6 +93,9 @@ void ASound_Detector::On_Interact_Begin_Implementation(AActor *interacting_actor
 
 	check(Interaction_Tip_Widget_Component != 0);
 	Interaction_Tip_Widget_Component->SetVisibility(false);
+
+	if (Interaction_Sound != 0)
+		Audio_Component->Play();
 }
 //------------------------------------------------------------------------------------------------------------
 void ASound_Detector::On_Trace_Hit_Implementation(AActor *interacting_actor, UPrimitiveComponent *hit_component)

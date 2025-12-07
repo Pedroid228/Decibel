@@ -4,6 +4,7 @@
 #include "Components/StaticMeshComponent.h"
 #include "Components/WidgetComponent.h"
 #include "Subsystems/Localization_Manager_Subsystem/Localization_Manager_Subsystem.h"
+#include "Components/AudioComponent.h"
 #include "UI/Interaction_Widget/Interaction_Widget.h"
 
 // AInteractable_Actor
@@ -21,6 +22,10 @@ AInteractable_Actor::AInteractable_Actor(): Interaction_Type(EInteraction_Type::
 	Interaction_Tip_Widget_Component = CreateDefaultSubobject<UWidgetComponent>(TEXT("Interaction_Tip_Widget_Comp"));
 	check(Interaction_Tip_Widget_Component != 0);
 	Interaction_Tip_Widget_Component->SetupAttachment(Mesh);
+
+	Audio_Component = CreateDefaultSubobject<UAudioComponent>(TEXT("Audio_Comp"));
+	check(Audio_Component != 0);
+	Audio_Component->SetupAttachment(Mesh);
 
 	PrimaryActorTick.bCanEverTick = true;
 	PrimaryActorTick.bStartWithTickEnabled = false;
@@ -68,6 +73,11 @@ void AInteractable_Actor::BeginPlay()
 	interaction_widget->Set_Texture(texture);
 
 	Interaction_Tip_Widget_Component->SetVisibility(false);
+
+	check(Audio_Component != 0);
+
+	if (Interaction_Sound != 0)
+		Audio_Component->SetSound(Interaction_Sound);
 }
 //------------------------------------------------------------------------------------------------------------
 void AInteractable_Actor::On_Trace_Hit_Implementation(AActor *interacting_actor, UPrimitiveComponent *hit_component)

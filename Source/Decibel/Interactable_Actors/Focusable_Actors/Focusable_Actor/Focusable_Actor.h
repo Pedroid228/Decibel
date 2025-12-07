@@ -18,7 +18,6 @@ public:
 	virtual void On_Save_Implementation(FActor_Save_Data &save_data);
 
 protected:
-	virtual void BeginPlay();
 	virtual void Tick(float delta_time);
 	virtual void On_Interact_Begin_Implementation(AActor *interacting_actor);
 	virtual void On_Interact_End_Implementation();
@@ -41,8 +40,6 @@ protected:
 	FVector2D Last_Mouse_Position;
 	FVector2D Mouse_Move_Vector;
 	FTimerHandle Emit_Sound_Timer_Handle;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly) UAudioComponent *Audio_Component = 0;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Sound) USoundBase *Moving_Sound = 0;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) USound_Emitter_Component *Sound_Emitter_Component = 0;
 	APlayerController *Player_Controller = 0;
 	AActor *Interacting_Actor = 0;

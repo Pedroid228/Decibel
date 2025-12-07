@@ -5,6 +5,7 @@
 #include "Components/WidgetComponent.h"
 #include "Interactable_Actors/Focusable_Actors/Doors/Locked_Door/Locked_Door.h"
 #include "UI/Keycard_Slot_Widget/Keycard_Slot_Widget.h"
+#include "Components/AudioComponent.h"
 
 // AKeycard_Scanner
 //------------------------------------------------------------------------------------------------------------
@@ -59,7 +60,19 @@ void AKeycard_Scanner::On_Interact_Begin_Implementation(AActor *interacting_acto
 		timer_manger.SetTimer(Door_Unlocked_Timer_Handle, this, &AKeycard_Scanner::Block_Door, Open_Time_Sec, false);
 
 		Is_Unlocked = true;
+
+		if (Interaction_Sound_Success != 0)
+		{
+			Audio_Component->SetSound(Interaction_Sound_Success);
+			Audio_Component->Play();
+		}
 	}
+	else
+		if (Interaction_Sound_Unsuccess != 0)
+		{
+			Audio_Component->SetSound(Interaction_Sound_Unsuccess);
+			Audio_Component->Play();
+		}
 }
 //------------------------------------------------------------------------------------------------------------
 void AKeycard_Scanner::Block_Door()

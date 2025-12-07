@@ -14,10 +14,6 @@ AFocusable_Actor::AFocusable_Actor()
 	check(Interaction_Tip_Widget_Component != 0);
 	Interaction_Tip_Widget_Component->SetupAttachment(Mesh, TEXT("Grip_Socket"));
 
-	Audio_Component = CreateDefaultSubobject<UAudioComponent>(TEXT("Audio_Comp"));
-	check(Audio_Component != 0);
-	Audio_Component->SetupAttachment(Mesh);
-
 	Sound_Emitter_Component = CreateDefaultSubobject<USound_Emitter_Component>(TEXT("Sound_Emitter_Comp"));
 	check(Sound_Emitter_Component != 0);
 	Sound_Emitter_Component->SetupAttachment(Mesh);
@@ -26,16 +22,6 @@ AFocusable_Actor::AFocusable_Actor()
 void AFocusable_Actor::On_Save_Implementation(FActor_Save_Data &save_data)
 {
 	save_data.Actor_Class_Name = GetClass()->GetName();
-}
-//------------------------------------------------------------------------------------------------------------
-void AFocusable_Actor::BeginPlay()
-{
-	Super::BeginPlay();
-
-	check(Audio_Component != 0);
-
-	if (Moving_Sound != 0)
-		Audio_Component->SetSound(Moving_Sound);
 }
 //------------------------------------------------------------------------------------------------------------
 void AFocusable_Actor::Tick(float delta_time)
@@ -135,7 +121,7 @@ void AFocusable_Actor::Update_Sound_Playback(float delta_time)
 
 	check(Audio_Component != 0);
 
-	if (Moving_Sound == 0)
+	if (Interaction_Sound == 0)
 		return;
 
 	if (Is_Moving)

@@ -29,6 +29,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly) UPointLightComponent *Green_Light = 0;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Interaction_Tip) UWidgetComponent *Keycard_Slot_Widget_Component = 0;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) UMaterialInterface *Base_Color_Material = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Sound) USoundBase *Interaction_Sound_Success = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Sound) USoundBase *Interaction_Sound_Unsuccess = 0;
+
 
 private:
 	void Block_Door();

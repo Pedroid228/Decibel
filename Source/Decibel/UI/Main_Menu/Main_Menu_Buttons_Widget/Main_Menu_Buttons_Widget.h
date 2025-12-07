@@ -10,6 +10,7 @@ class UComboBoxString;
 class UDecibel_Game_Instance;
 class USaves_List_Widget;
 class ULocalization_Manager_Subsystem;
+class UTextBlock;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOn_Show_Save_Slots, ESlot_Save_State, SaveState);
 
@@ -30,7 +31,7 @@ protected:
 	UPROPERTY(meta = (BindWidget)) UDecibel_Button_Widget *Load_Game_Button;
 	UPROPERTY(meta = (BindWidget)) UDecibel_Button_Widget *Quit_Game_Button;
 	UPROPERTY(meta = (BindWidget)) UComboBoxString *Languages_Combo_Box = 0;
-
+	UPROPERTY(meta = (BindWidget)) UTextBlock *Greetings_Text = 0;
 
 private:
 	void Setup_Combo_Box();

@@ -13,11 +13,15 @@ int32 APatrol_Points::Num()
 //------------------------------------------------------------------------------------------------------------
 FVector APatrol_Points::Get_Point_By_Index(int32 index)
 {
-	FVector point_pos;
+	FVector local_point, world_point;
+	FTransform actor_transform;
 
-	if (Points.IsValidIndex(index))
-		point_pos = Points[index];
+	check(Points.IsValidIndex(index))
+	local_point= Points[index];
 
-	return point_pos;
+	actor_transform = GetActorTransform();
+	world_point = actor_transform.TransformPosition(local_point);
+
+	return world_point;
 }
 //------------------------------------------------------------------------------------------------------------

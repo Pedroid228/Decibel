@@ -24,7 +24,8 @@ void ADecibel_HUD::BeginPlay()
 	
 	check(Pause_Menu_Widget_BP_Class != 0);
 	check(Game_Saving_Widget_BP_Class != 0);
-	
+	check(Crosshair_Widget_BP_Class != 0);
+
 	game_mode = world->GetAuthGameMode();
 	check(game_mode != 0);
 
@@ -49,6 +50,11 @@ void ADecibel_HUD::BeginPlay()
 	check(Game_Saving_Widget != 0);
 	Game_Saving_Widget->AddToViewport();
 	Game_Saving_Widget->SetVisibility(ESlateVisibility::Collapsed);
+
+	Crosshair_Widget = CreateWidget<UUserWidget>(world, Crosshair_Widget_BP_Class);
+	check(Crosshair_Widget != 0);
+	Crosshair_Widget->AddToViewport();
+	Game_Saving_Widget->SetVisibility(ESlateVisibility::Visible);
 }
 //------------------------------------------------------------------------------------------------------------
 void ADecibel_HUD::Show_Pause_Menu(bool is_visible)
@@ -56,9 +62,16 @@ void ADecibel_HUD::Show_Pause_Menu(bool is_visible)
 	check(Pasue_Menu_Widget != 0)
 
 	if (is_visible)
+	{
+		Crosshair_Widget->SetVisibility(ESlateVisibility::Collapsed);
 		Pasue_Menu_Widget->SetVisibility(ESlateVisibility::Visible);
+	}
 	else
+	{
+		Crosshair_Widget->SetVisibility(ESlateVisibility::Visible);
 		Pasue_Menu_Widget->SetVisibility(ESlateVisibility::Collapsed);
+	}
+		
 }
 //------------------------------------------------------------------------------------------------------------
 void ADecibel_HUD::Show_Game_Saved()

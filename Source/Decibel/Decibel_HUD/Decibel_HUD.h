@@ -20,6 +20,7 @@ protected:
 	UPROPERTY(EditAnywhere) float Game_Saved_Showing_Time;
 	UPROPERTY(EditAnywhere) TSubclassOf<UPause_Menu_Widget> Pause_Menu_Widget_BP_Class;
 	UPROPERTY(EditAnywhere) TSubclassOf<UGame_Saving_Widget> Game_Saving_Widget_BP_Class;
+	UPROPERTY(EditAnywhere) TSubclassOf<UUserWidget> Crosshair_Widget_BP_Class;
 
 private:
 	UFUNCTION() void Show_Pause_Menu(bool is_visible);
@@ -30,5 +31,6 @@ private:
 	FTimerHandle Game_Save_Timer;
 	UPause_Menu_Widget *Pasue_Menu_Widget = 0;
 	UGame_Saving_Widget *Game_Saving_Widget = 0;
+	UUserWidget *Crosshair_Widget = 0;
 };
 //------------------------------------------------------------------------------------------------------------
