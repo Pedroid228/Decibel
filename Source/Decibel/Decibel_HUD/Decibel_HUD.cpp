@@ -84,22 +84,22 @@ void ADecibel_HUD::BeginPlay()
 
 	Pasue_Menu_Widget = CreateWidget<UPause_Menu_Widget>(world, Pause_Menu_Widget_BP_Class);
 	check(Pasue_Menu_Widget != 0);
-	Pasue_Menu_Widget->AddToViewport();
+	Pasue_Menu_Widget->AddToViewport(10);
 	Pasue_Menu_Widget->SetVisibility(ESlateVisibility::Collapsed);
 
 	Game_Saving_Widget = CreateWidget<UGame_Saving_Widget>(world, Game_Saving_Widget_BP_Class);
 	check(Game_Saving_Widget != 0);
-	Game_Saving_Widget->AddToViewport();
+	Game_Saving_Widget->AddToViewport(1);
 	Game_Saving_Widget->SetVisibility(ESlateVisibility::Collapsed);
 
 	Crosshair_Widget = CreateWidget<UUserWidget>(world, Crosshair_Widget_BP_Class);
 	check(Crosshair_Widget != 0);
-	Crosshair_Widget->AddToViewport();
+	Crosshair_Widget->AddToViewport(1);
 	Crosshair_Widget->SetVisibility(ESlateVisibility::Visible);
 
 	Keycards_Widget = CreateWidget<UKeycards_Widget>(world, Keycards_Widget_BP_Class);
 	check(Keycards_Widget != 0);
-	Keycards_Widget->AddToViewport();
+	Keycards_Widget->AddToViewport(1);
 	Keycards_Widget->SetVisibility(ESlateVisibility::Visible);
 }
 //------------------------------------------------------------------------------------------------------------
